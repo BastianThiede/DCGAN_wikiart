@@ -1,15 +1,23 @@
 import numpy as np
-import scipy
+import scipy.misc
 import yaml
 import math
 import os
 from glob import glob
 
+
 def load_image(image_path, input_height=256,input_width=256):
     img = scipy.misc.imread(image_path).astype(np.float)
     resized_img = scipy.misc.imresize(img,[input_height,input_width])
-    scaled_img =((np.arrray(resized_img) - 127.5) /127.5 - 1.)
+    scaled_img =scale(np.array(resized_img))
     return scaled_img
+
+
+def scale(img,reverse=False):
+    if reverse:
+        return(img * 127.5) + 127.5
+    else:
+        return (img - 127.5) / 127.5
 
 
 def combine_images_rgb(generated_images):
@@ -52,8 +60,10 @@ def load_data(path=None):
         default_path = get_default_path()
         path = os.path.join(default_path,'sample_data')
     search_path = os.path.join(path,'**/*.jpg')
+    print('Searching at: {}'.format(search_path))
     data = list()
-    for image_path in search_path:
+    for image_path in glob(search_path):
+        print(image_path)
         data.append(load_image(image_path))
 
     return data
@@ -66,3 +76,8 @@ if __name__ == '__main__':
     data = load_data()
     import matplotlib.pyplot as plt
     sample = data[0]
+    print(sample.shape)
+    combined =combine_images_rgb(scale(np.array(data),reverse=True))
+    plt.imshow(combined.astype(np.uint8))
+
+    plt.show()
