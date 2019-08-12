@@ -1,8 +1,12 @@
 from keras.initializers import RandomNormal
 from keras.layers import (ZeroPadding2D,
-    Conv2DTranspose, Conv2D, BatchNormalization, Reshape, Dense, LeakyReLU,
-    Flatten,UpSampling2D)
+                          Conv2DTranspose, Conv2D, BatchNormalization, Reshape,
+                          Dense, LeakyReLU,
+                          Flatten, UpSampling2D)
 from keras.models import Sequential
+from utils import load_config
+from keras.optimizers import Adam
+from keras.utils import multi_gpu_model
 
 
 def generator(input_dim=100, units=1024, activation='relu'):
@@ -60,7 +64,8 @@ def discriminator():
 
     # Conv 1: 16x16x64
     discriminator.add(Conv2D(32, kernel_size=4, strides=2, padding='same',
-                             input_shape=(256, 256, 3), kernel_initializer=init))
+                             input_shape=(256, 256, 3),
+                             kernel_initializer=init))
     discriminator.add(LeakyReLU(0.2))
 
     # Conv 2:
@@ -93,6 +98,32 @@ def discriminator():
     discriminator.add(Dense(1, activation='sigmoid'))
     print(discriminator.summary())
     return discriminator
+
+
+def build_gan(config_path):
+    config = load_config(config_path)
+    g = generator()
+    d = discriminator()
+    opt = Adam(lr=config['learning_rate'],
+               beta_1=config['beta_1'])
+
+    d.trainable = True
+    d.compile(loss='binary_crossentropy',
+              metrics=['accuracy'],
+              optimizer=opt)
+    d.trainable = False
+
+    dcgan = Sequential([g, d])
+    opt = Adam(lr=config['learning_rate'], beta_1=config['beta_1'])
+    dcgan.compile(loss='binary_crossentropy',
+                  metrics=['accuracy'],
+                  optimizer=opt)
+
+    if config['multi_gpu']:
+        dcgan = multi_gpu_model(dcgan)
+        d = multi_gpu_model(d)
+
+    return dcgan, d, g
 
 
 if __name__ == '__main__':
