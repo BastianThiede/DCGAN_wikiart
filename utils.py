@@ -1,0 +1,60 @@
+import numpy as np
+import scipy
+import yaml
+import math
+import os
+from glob import glob
+
+def load_image(image_path, input_height=256,input_width=256):
+    img = scipy.misc.imread(image_path).astype(np.float)
+    resized_img = scipy.misc.imresize(img,[input_height,input_width])
+    scaled_img =((np.arrray(resized_img) - 127.5) /127.5 - 1.)
+    return scaled_img
+
+
+def combine_images_rgb(generated_images):
+    total,width,height = generated_images.shape[:-1]
+    cols = int(math.sqrt(total))
+    rows = math.ceil(float(total)/cols)
+    combined_image = np.zeros((height*rows, width*cols,3),
+                              dtype=generated_images.dtype)
+
+    for index, image in enumerate(generated_images):
+        i = int(index/cols)
+        j = index % cols
+        combined_image[width*i:width*(i+1), height*j:height*(j+1),:] = image[:, :, :]
+    return combined_image
+
+
+def get_config_path():
+    dir_path = get_default_path()
+    config_path = os.path.join(dir_path,'configs')
+    return config_path
+
+
+def get_default_path():
+    full_path = os.path.realpath(__file__)
+    dir_path = os.path.dirname(full_path)
+    return dir_path
+
+
+def load_config(config_file='default.yaml'):
+    conf_path = get_config_path()
+    full_path = os.path.join(conf_path, config_file)
+    with open(full_path) as f:
+        config_yaml = yaml.load(f)
+
+    return config_yaml
+
+
+def load_data(path=None):
+    if path is None:
+        default_path = get_default_path()
+        sampel_path = os.path.join(default_path,'sample_data')
+
+
+
+
+
+if __name__ == '__main__':
+    print(load_config())
