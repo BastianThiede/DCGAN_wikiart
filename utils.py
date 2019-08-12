@@ -50,11 +50,19 @@ def load_config(config_file='default.yaml'):
 def load_data(path=None):
     if path is None:
         default_path = get_default_path()
-        sampel_path = os.path.join(default_path,'sample_data')
+        path = os.path.join(default_path,'sample_data')
+    search_path = os.path.join(path,'**/*.jpg')
+    data = list()
+    for image_path in search_path:
+        data.append(load_image(image_path))
 
+    return data
 
 
 
 
 if __name__ == '__main__':
     print(load_config())
+    data = load_data()
+    import matplotlib.pyplot as plt
+    sample = data[0]
