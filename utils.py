@@ -98,7 +98,7 @@ def load_image_batch(paths,batch_size,batch_idx):
         except Exception:
             pass
 
-    while batch <= batch_size:
+    while len(batch) <= batch_size:
         try:
             img = load_image(random.choice(paths))
             batch.append(img)
