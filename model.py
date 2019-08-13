@@ -108,9 +108,12 @@ def build_gan(config_path):
                beta_1=config['beta_1'])
 
     d.trainable = True
+    if config['multi_gpu']:
+        d = multi_gpu_model(d)
     d.compile(loss='binary_crossentropy',
               metrics=['accuracy'],
               optimizer=opt)
+
     d.trainable = False
 
     dcgan = Sequential([g, d])
@@ -121,7 +124,6 @@ def build_gan(config_path):
 
     if config['multi_gpu']:
         dcgan = multi_gpu_model(dcgan)
-        d = multi_gpu_model(d)
 
     return dcgan, d, g
 
