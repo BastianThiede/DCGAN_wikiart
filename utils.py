@@ -9,11 +9,14 @@ from tqdm import tqdm
 from keras.preprocessing.image import load_img, img_to_array
 import cv2
 def load_image(image_path, input_height=256, input_width=256):
-    img = cv2.imread(image_path)
-    new_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    resized_img = cv2.resize(new_img, (input_height, input_width))
-    scaled_img = scale(np.array(resized_img))
-    return scaled_img
+    try:
+        img = cv2.imread(image_path)
+        new_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        resized_img = cv2.resize(new_img, (input_height, input_width))
+        scaled_img = scale(np.array(resized_img))
+        return scaled_img
+    except UnicodeDecodeError:
+        return None
 
 def scale(img, reverse=False):
     if reverse:
@@ -69,7 +72,9 @@ def load_data(path=None):
     print('Searching at: {}'.format(search_path))
     data = list()
     for image_path in tqdm(glob(search_path)):
-        data.append(load_image(image_path))
+        img = load_image(image_path)
+        if img:
+            data.append(img)
     data = np.array(data)
     data = data.reshape(data.shape[0], data.shape[1], data.shape[2], 3)
     return np.array(data)
