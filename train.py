@@ -1,17 +1,24 @@
-from utils import load_data, load_config, save_images
+from utils import load_data, load_config, save_images, get_gan_paths
 from model import build_gan
 import numpy as np
 from time import time
-import sys
+import argparse
+import os
+from keras.models import load_model
 
 
-def main(config_path='default.yaml'):
+def main(config_path, save_dir, data_dir):
     config = load_config(config_path)
     batch_size = config['batch_size']
-    epochs = config['epochs']
-    X_train = load_data()
-    dcgan, discriminator, generator = build_gan(config_path)
+    dcgan_path, generator_path, discriminator_path = get_gan_paths(save_dir)
 
+    dcgan, discriminator, generator = load_or_create_model(config_path,
+                                                           dcgan_path,
+                                                           discriminator_path,
+                                                           generator_path)
+
+    epochs = config['epochs']
+    X_train = load_data(path=data_dir)
     num_batches = int(X_train.shape[0] / batch_size)
 
     print("-------------------")
@@ -41,8 +48,24 @@ def main(config_path='default.yaml'):
                                                        end))
 
         if epoch % 10 == 0:
+            generator.save(generator_path)
+            discriminator.save(discriminator_path)
+            dcgan.save(dcgan_path)
             images = generator.predict(z_pred)
             save_images(images, 'dcgan_keras_epoch_{}.png'.format(epoch))
+
+
+def load_or_create_model(config_path, dcgan_path, discriminator_path,
+                         generator_path):
+    dcgan, discriminator, generator = build_gan(config_path)
+
+    if (os.path.exists(dcgan_path) and os.path.exists(generator_path)
+            and os.path.exists(discriminator_path)):
+        dcgan.load_weights(dcgan_path)
+        generator.load_weights(generator_path)
+        discriminator.load_weights(discriminator_path)
+
+    return dcgan, discriminator, generator
 
 
 def train_batch(X_train, batch_size, dcgan, discriminator, generator, index,
@@ -58,5 +81,18 @@ def train_batch(X_train, batch_size, dcgan, discriminator, generator, index,
     return d_loss_fake, d_loss_real, g_loss
 
 
+def build_argparse():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config_filename", help="config filename",
+                        default='test_config.yaml')
+    parser.add_argument("--data_dir", help="data-dir", default=None)
+    parser.add_argument("--save_dir", help="save dir", default='/tmp')
+    return parser
+
+
 if __name__ == '__main__':
-    main(sys.argv[1])
+    parser = build_argparse()
+    args = parser.parse_args()
+    main(config_path=args.config_filename,
+         data_dir=args.data_dir,
+         save_dir=args.save_dir)

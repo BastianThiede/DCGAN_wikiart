@@ -68,7 +68,6 @@ def load_data(path=None):
     print('Searching at: {}'.format(search_path))
     data = list()
     for image_path in glob(search_path):
-        print(image_path)
         data.append(load_image(image_path))
     data = np.array(data)
     data = data.reshape(data.shape[0], data.shape[1], data.shape[2], 3)
@@ -86,6 +85,12 @@ def display_images(images):
     plt.imshow(combined.astype(np.uint8))
     plt.show()
 
+
+def get_gan_paths(save_dir):
+    generator_path = os.path.join(save_dir, 'generator.h5')
+    discriminator_path = os.path.join(save_dir, 'discriminator.h5')
+    dcgan_path = os.path.join(save_dir, 'dcgan.h5')
+    return dcgan_path, discriminator_path, generator_path
 
 if __name__ == '__main__':
     print(load_config())
