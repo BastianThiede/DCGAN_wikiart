@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from keras.preprocessing.image import load_img, img_to_array
 import cv2
+
 def load_image(image_path, input_height=256, input_width=256):
     try:
         img = cv2.imread(image_path)
@@ -73,7 +74,7 @@ def load_data(path=None):
     data = list()
     for image_path in tqdm(glob(search_path)):
         img = load_image(image_path)
-        if img:
+        if isinstance(img, np.ndarray):
             data.append(img)
     data = np.array(data)
     data = data.reshape(data.shape[0], data.shape[1], data.shape[2], 3)
