@@ -11,7 +11,7 @@ import cv2
 def load_image(image_path, input_height=256, input_width=256):
     img = cv2.imread(image_path)
     new_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    resized_img = cv2.resize(new_img, [input_height, input_width])
+    resized_img = cv2.resize(new_img, (input_height, input_width))
     scaled_img = scale(np.array(resized_img))
     return scaled_img
 
