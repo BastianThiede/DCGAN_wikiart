@@ -4,8 +4,7 @@ import numpy as np
 from time import time
 import argparse
 import os
-from keras.models import load_model
-
+from tqdm import tqdm
 
 def main(config_path, save_dir, data_dir):
     config = load_config(config_path)
@@ -31,7 +30,7 @@ def main(config_path, save_dir, data_dir):
     y_d_gen = [0] * batch_size
     for epoch in range(epochs):
         start = time()
-        for index in range(num_batches):
+        for index in tqdm(range(num_batches)):
             X_train = load_image_batch(paths,batch_size,index)
             d_loss_fake, d_loss_real, g_loss = train_batch(X_train, batch_size,
                                                            dcgan,
