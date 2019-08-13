@@ -118,12 +118,13 @@ def build_gan(config_path):
 
     dcgan = Sequential([g, d])
     opt = Adam(lr=config['learning_rate'], beta_1=config['beta_1'])
+    if config['multi_gpu']:
+        dcgan = multi_gpu_model(dcgan)
     dcgan.compile(loss='binary_crossentropy',
                   metrics=['accuracy'],
                   optimizer=opt)
 
-    if config['multi_gpu']:
-        dcgan = multi_gpu_model(dcgan)
+
 
     return dcgan, d, g
 
