@@ -5,7 +5,7 @@ import math
 import os
 from glob import glob
 import matplotlib.pyplot as plt
-
+from tqdm import tqdm
 
 def load_image(image_path, input_height=256, input_width=256):
     img = scipy.misc.imread(image_path).astype(np.float)
@@ -67,7 +67,7 @@ def load_data(path=None):
     search_path = os.path.join(path, '**/*.jpg')
     print('Searching at: {}'.format(search_path))
     data = list()
-    for image_path in glob(search_path):
+    for image_path in tqdm(glob(search_path)):
         data.append(load_image(image_path))
     data = np.array(data)
     data = data.reshape(data.shape[0], data.shape[1], data.shape[2], 3)
