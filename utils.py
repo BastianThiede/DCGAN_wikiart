@@ -75,7 +75,7 @@ def load_data(path=None):
             img = load_image(image_path)
             data.append(img)
         except Exception:
-            print('Image: {} failed!'.format(image_path))
+            print('Image failed!')
     data = np.array(data)
     data = data.reshape(data.shape[0], data.shape[1], data.shape[2], 3)
     return np.array(data)
