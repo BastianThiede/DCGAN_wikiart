@@ -6,8 +6,8 @@ import os
 from glob import glob
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-from keras.preprocessing.image import load_img, img_to_array
 import cv2
+import random
 
 def load_image(image_path, input_height=256, input_width=256):
     img = cv2.imread(image_path)
@@ -79,6 +79,31 @@ def load_data(path=None):
     data = np.array(data)
     data = data.reshape(data.shape[0], data.shape[1], data.shape[2], 3)
     return np.array(data)
+
+
+def get_image_paths(path=None):
+    if path is None:
+        default_path = get_default_path()
+        path = os.path.join(default_path, 'sample_data')
+    search_path = os.path.join(path, '**/*.jpg')
+    all_image_paths = glob(search_path)
+    return all_image_paths
+
+def load_image_batch(paths,batch_size,batch_idx):
+    batch = list()
+    for path in paths[batch_idx * batch_size:(batch_idx + 1) * batch_size]:
+        try:
+            img = load_image(path)
+            batch.append(img)
+        except Exception:
+            pass
+
+    while batch <= batch_size:
+        try:
+            img = load_image(random.choice(paths))
+            batch.append(img)
+        except Exception:
+            pass
 
 
 def save_images(images, save_name):

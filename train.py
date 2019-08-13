@@ -1,4 +1,4 @@
-from utils import load_data, load_config, save_images, get_gan_paths
+from utils import get_image_paths, load_image_batch, load_config, save_images, get_gan_paths
 from model import build_gan
 import numpy as np
 from time import time
@@ -18,8 +18,8 @@ def main(config_path, save_dir, data_dir):
                                                            generator_path)
 
     epochs = config['epochs']
-    X_train = load_data(path=data_dir)
-    num_batches = int(X_train.shape[0] / batch_size)
+    paths = get_image_paths(data_dir)
+    num_batches = int(len(paths) / batch_size)
 
     print("-------------------")
     print("Total epoch:", config['epochs'], "Number of batches:", num_batches)
@@ -32,6 +32,7 @@ def main(config_path, save_dir, data_dir):
     for epoch in range(epochs):
         start = time()
         for index in range(num_batches):
+            X_train = load_image_batch(paths,batch_size,index)
             d_loss_fake, d_loss_real, g_loss = train_batch(X_train, batch_size,
                                                            dcgan,
                                                            discriminator,
@@ -70,7 +71,7 @@ def load_or_create_model(config_path, dcgan_path, discriminator_path,
 
 def train_batch(X_train, batch_size, dcgan, discriminator, generator, index,
                 y_d_gen, y_d_true, y_g):
-    X_d_true = X_train[index * batch_size:(index + 1) * batch_size]
+    X_d_true = X_train
     X_g = np.array([np.random.normal(0, 0.5, 100) for _ in range(batch_size)])
     X_d_gen = generator.predict(X_g, verbose=0)
     # train discriminator
