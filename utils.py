@@ -75,8 +75,9 @@ def load_data(path=None):
     search_path = os.path.join(path, '**/*.jpg')
     print('Searching at: {}'.format(search_path))
     pool = multiprocessing.Pool()
-    data = pool.map(load_image, glob(search_path))
-    data = [x for x in data if x is not None]
+    data = [x for x in
+            tqdm(pool.imap_unordered(load_image, glob(search_path)))
+            if x is not None]
     data = np.array(data)
     data = data.reshape(data.shape[0], data.shape[1], data.shape[2], 3)
     return np.array(data)
