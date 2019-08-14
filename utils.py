@@ -1,5 +1,5 @@
 import numpy as np
-import scipy.misc
+import pickle
 import yaml
 import math
 import os
@@ -79,6 +79,29 @@ def load_data(path=None):
     data = np.array(data)
     data = data.reshape(data.shape[0], data.shape[1], data.shape[2], 3)
     return np.array(data)
+
+
+def load_pkl(pkl_path):
+    with open(pkl_path,'rb') as f:
+        return pickle.load(f)
+
+
+def load_data_pkl(path=None):
+    if path is None:
+        default_path = get_default_path()
+        path = os.path.join(default_path, 'sample_data')
+    search_path = os.path.join(path, '**/*.pkl')
+    print('Searching at: {}'.format(search_path))
+    data = list()
+    for pkl_path in tqdm(glob(search_path)):
+        img = load_pkl(pkl_path)
+        data.append(img)
+
+    data = np.array(data)
+    data = data.reshape(data.shape[0], data.shape[1], data.shape[2], 3)
+    return np.array(data)
+
+
 
 
 def get_image_paths(path=None):

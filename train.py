@@ -1,12 +1,12 @@
-from utils import get_image_paths, load_image_batch, load_config, save_images, get_gan_paths
+from utils import get_image_paths, load_data, load_config, save_images, get_gan_paths
 from model import build_gan
 import numpy as np
 from time import time
 import argparse
 import os
-from tqdm import tqdm
+from keras.models import load_model
 
-def main(config_path, save_dir, data_dir):
+def train_batches(config_path, save_dir, data_dir):
     config = load_config(config_path)
     batch_size = config['batch_size']
     dcgan_path, generator_path, discriminator_path = get_gan_paths(save_dir)
@@ -54,6 +54,53 @@ def main(config_path, save_dir, data_dir):
             images = generator.predict(z_pred)
             save_images(images, 'dcgan_keras_epoch_{}.png'.format(epoch))
 
+def main(config_path, save_dir, data_dir):
+    config = load_config(config_path)
+    batch_size = config['batch_size']
+    dcgan_path, generator_path, discriminator_path = get_gan_paths(save_dir)
+
+    dcgan, discriminator, generator = load_or_create_model(config_path,
+                                                           dcgan_path,
+                                                           discriminator_path,
+                                                           generator_path)
+
+    epochs = config['epochs']
+    X_train = load_data(path=data_dir)
+    num_batches = int(X_train.shape[0] / batch_size)
+
+    print("-------------------")
+    print("Total epoch:", config['epochs'], "Number of batches:", num_batches)
+    print("-------------------")
+
+    z_pred = np.array([np.random.normal(0, 0.5, 100) for _ in range(100)])
+    y_g = [1] * batch_size
+    y_d_true = [1] * batch_size
+    y_d_gen = [0] * batch_size
+    for epoch in range(epochs):
+        start = time()
+        for index in range(num_batches):
+            d_loss_fake, d_loss_real, g_loss = train_batch(X_train, batch_size,
+                                                           dcgan,
+                                                           discriminator,
+                                                           generator, index,
+                                                           y_d_gen, y_d_true,
+                                                           y_g)
+        end = time() - start
+        # save generated images
+        print('D-loss-real: {}, D-loss-fake: {}, '
+              'G-loss: {}, epoch: {}, time: {}'.format(d_loss_real,
+                                                       d_loss_fake,
+                                                       g_loss,
+                                                       epoch,
+                                                       end))
+
+        if epoch % 10 == 0:
+            generator.save(generator_path)
+            discriminator.save(discriminator_path)
+            dcgan.save(dcgan_path)
+            images = generator.predict(z_pred)
+            save_images(images, 'dcgan_keras_epoch_{}.png'.format(epoch))
+
 
 def load_or_create_model(config_path, dcgan_path, discriminator_path,
                          generator_path):
@@ -70,7 +117,7 @@ def load_or_create_model(config_path, dcgan_path, discriminator_path,
 
 def train_batch(X_train, batch_size, dcgan, discriminator, generator, index,
                 y_d_gen, y_d_true, y_g):
-    X_d_true = X_train
+    X_d_true = X_train[index * batch_size:(index + 1) * batch_size]
     X_g = np.array([np.random.normal(0, 0.5, 100) for _ in range(batch_size)])
     X_d_gen = generator.predict(X_g, verbose=0)
     # train discriminator
