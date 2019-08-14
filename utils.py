@@ -81,8 +81,9 @@ def load_data(path=None):
     pool = multiprocessing.Pool()
     counter = 0
     for img in tqdm(pool.imap_unordered(load_image, paths),total=len(paths)):
-        data[counter, :, :, :] = img
-        counter += 1
+        if img is not None:
+            data[counter, :, :, :] = img
+            counter += 1
     return data
 
 
