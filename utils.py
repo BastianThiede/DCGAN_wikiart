@@ -74,15 +74,20 @@ def load_data(path=None):
         path = os.path.join(default_path, 'sample_data')
     search_path = os.path.join(path, '**/*.jpg')
     print('Searching at: {}'.format(search_path))
+    paths = glob(search_path)
+    fpath = 'memmap_numpy_images.dat'
+    data = np.memmap(fpath, dtype='float32', mode='w+',
+                     shape=(len(paths), 256, 256, 3))
     pool = multiprocessing.Pool()
-    data = np.fromiter(tqdm(pool.imap_unordered(load_image, glob(search_path))),
-                       float)
-    data = data.reshape(data.shape[0], data.shape[1], data.shape[2], 3)
-    return np.array(data)
+    counter = 0
+    for img in tqdm(pool.imap_unordered(load_image, paths),total=len(paths)):
+        data[counter, :, :, :] = img
+        counter += 1
+    return data
 
 
 def load_pkl(pkl_path):
-    with open(pkl_path,'rb') as f:
+    with open(pkl_path, 'rb') as f:
         return pickle.load(f)
 
 
@@ -102,8 +107,6 @@ def load_data_pkl(path=None):
     return np.array(data)
 
 
-
-
 def get_image_paths(path=None):
     if path is None:
         default_path = get_default_path()
@@ -112,7 +115,8 @@ def get_image_paths(path=None):
     all_image_paths = glob(search_path)
     return all_image_paths
 
-def load_image_batch(paths,batch_size,batch_idx):
+
+def load_image_batch(paths, batch_size, batch_idx):
     batch = list()
     for path in paths[batch_idx * batch_size:(batch_idx + 1) * batch_size]:
         try:
@@ -129,6 +133,7 @@ def load_image_batch(paths,batch_size,batch_idx):
             pass
 
     return np.array(batch)
+
 
 def save_images(images, save_name):
     combined = combine_images_rgb(scale(images, reverse=True))
@@ -147,6 +152,7 @@ def get_gan_paths(save_dir):
     discriminator_path = os.path.join(save_dir, 'discriminator.h5')
     dcgan_path = os.path.join(save_dir, 'dcgan.h5')
     return dcgan_path, discriminator_path, generator_path
+
 
 if __name__ == '__main__':
     print(load_config())
