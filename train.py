@@ -4,7 +4,7 @@ import numpy as np
 from time import time
 import argparse
 import os
-from keras.models import load_model
+from tqdm import tqdm
 
 def train_batches(config_path, save_dir, data_dir):
     config = load_config(config_path)
@@ -78,7 +78,7 @@ def main(config_path, save_dir, data_dir):
     y_d_gen = [0] * batch_size
     for epoch in range(epochs):
         start = time()
-        for index in range(num_batches):
+        for index in tqdm(range(num_batches)):
             d_loss_fake, d_loss_real, g_loss = train_batch(X_train, batch_size,
                                                            dcgan,
                                                            discriminator,
@@ -118,6 +118,7 @@ def load_or_create_model(config_path, dcgan_path, discriminator_path,
 def train_batch(X_train, batch_size, dcgan, discriminator, generator, index,
                 y_d_gen, y_d_true, y_g):
     X_d_true = X_train[index * batch_size:(index + 1) * batch_size]
+    #X_d_true = X_d_true.view(dtype=np.float32, type=np.ndarray)
     X_g = np.array([np.random.normal(0, 0.5, 100) for _ in range(batch_size)])
     X_d_gen = generator.predict(X_g, verbose=0)
     # train discriminator
