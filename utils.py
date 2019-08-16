@@ -11,7 +11,7 @@ import random
 import multiprocessing
 
 
-def load_image(image_path, input_height=64, input_width=64):
+def load_image(image_path, input_height=256, input_width=256):
     try:
         img = cv2.imread(image_path)
         new_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -77,7 +77,7 @@ def load_data(path=None):
     paths = glob(search_path)
     fpath = 'memmap_numpy_images.dat'
     data = np.memmap(fpath, dtype='float32', mode='w+',
-                     shape=(len(paths), 64, 64, 3))
+                     shape=(len(paths), 256, 256, 3))
     pool = multiprocessing.Pool()
     counter = 0
     for img in tqdm(pool.imap_unordered(load_image, paths),total=len(paths)):
