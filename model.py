@@ -35,7 +35,7 @@ def generator(input_dim=100,units=1024,activation='relu'):
     generator.add(BatchNormalization())
     generator.add(LeakyReLU(0.2))
 
-    generator.add(Conv2DTranspose(64, kernel_size=5, strides=2, padding='same'))
+    generator.add(Conv2DTranspose(32, kernel_size=5, strides=2, padding='same'))
     generator.add(BatchNormalization())
     generator.add(LeakyReLU(0.2))
 
