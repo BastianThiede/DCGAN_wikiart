@@ -3,6 +3,7 @@ from model import build_gan
 import numpy as np
 from time import time
 import argparse
+import random
 import os
 from tqdm import tqdm
 
@@ -73,12 +74,15 @@ def main(config_path, save_dir, data_dir):
     print("-------------------")
 
     z_pred = np.array([np.random.normal(0, 0.5, 100) for _ in range(100)])
-    y_g = [1] * batch_size
     y_d_true = [1] * batch_size
-    y_d_gen = [0] * batch_size
     for epoch in range(epochs):
+        y_g = [(1 - random.randrange(0, 5) / 100.) for _ in range(batch_size)]
+        y_d_gen = [random.randrange(0, 5) / 100. for _ in range(batch_size)]
+
         start = time()
-        for index in tqdm(range(num_batches)):
+        batches = list(range(num_batches))
+        random.shuffle(batches)
+        for index in tqdm(batches):
             d_loss_fake, d_loss_real, g_loss = train_batch(X_train, batch_size,
                                                            dcgan,
                                                            discriminator,
