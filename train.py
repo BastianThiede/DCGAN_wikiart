@@ -6,6 +6,8 @@ import argparse
 import random
 import os
 from tqdm import tqdm
+import matplotlib.pyplot as plt
+import pandas as pd
 
 def train_batches(config_path, save_dir, data_dir):
     config = load_config(config_path)
@@ -82,6 +84,9 @@ def main(config_path, save_dir, data_dir):
         start = time()
         batches = list(range(num_batches))
         random.shuffle(batches)
+        d_loss_fake_data = list()
+        d_loss_real_data = list()
+        g_loss_data = list()
         for index in tqdm(batches):
             d_loss_fake, d_loss_real, g_loss = train_batch(X_train, batch_size,
                                                            dcgan,
@@ -89,6 +94,10 @@ def main(config_path, save_dir, data_dir):
                                                            generator, index,
                                                            y_d_gen, y_d_true,
                                                            y_g)
+            d_loss_fake_data.append(d_loss_fake[0])
+            d_loss_real_data.append(d_loss_real[0])
+            g_loss_data.append(g_loss[0])
+
         end = time() - start
         # save generated images
         print('D-loss-real: {}, D-loss-fake: {}, '
@@ -104,6 +113,18 @@ def main(config_path, save_dir, data_dir):
             dcgan.save(dcgan_path)
             images = generator.predict(z_pred)
             save_images(images, 'dcgan_keras_epoch_{}.png'.format(epoch))
+
+    plot = pd.Series(d_loss_fake_data).plot()
+    fig = plot.get_figure()
+    fig.savefig("d_loss_fake_data.png")
+
+    plot = pd.Series(d_loss_real_data).plot()
+    fig = plot.get_figure()
+    fig.savefig("d_loss_real_data.png")
+
+    plot = pd.Series(g_loss_data).plot()
+    fig = plot.get_figure()
+    fig.savefig("g_loss_data.png")
 
 
 def load_or_create_model(config_path, dcgan_path, discriminator_path,
