@@ -13,7 +13,6 @@ def generator(input_dim=100,units=1024,activation='relu'):
 
     # Generator network
     generator = Sequential()
-
     # FC: 2x2x512
     generator.add(Dense(2*2*512,input_shape=(input_dim,), kernel_initializer=init))
     generator.add(Reshape((2, 2, 512)))
@@ -21,22 +20,22 @@ def generator(input_dim=100,units=1024,activation='relu'):
     generator.add(LeakyReLU(0.2))
 
     # # Conv 1: 4x4x256
-    generator.add(Conv2DTranspose(256, kernel_size=5, strides=2, padding='same'))
-    generator.add(BatchNormalization())
+    generator.add(Conv2DTranspose(512, kernel_size=5, strides=2, padding='same'))
+    generator.add(BatchNormalization(momentum=0.8))
     generator.add(LeakyReLU(0.2))
 
     # Conv 2: 8x8x128
-    generator.add(Conv2DTranspose(128, kernel_size=5, strides=2, padding='same'))
-    generator.add(BatchNormalization())
+    generator.add(Conv2DTranspose(256, kernel_size=5, strides=2, padding='same'))
+    generator.add(BatchNormalization(momentum=0.8))
     generator.add(LeakyReLU(0.2))
 
     # Conv 3: 16x16x64
-    generator.add(Conv2DTranspose(64, kernel_size=5, strides=2, padding='same'))
-    generator.add(BatchNormalization())
+    generator.add(Conv2DTranspose(128, kernel_size=5, strides=2, padding='same'))
+    generator.add(BatchNormalization(momentum=0.8))
     generator.add(LeakyReLU(0.2))
 
-    generator.add(Conv2DTranspose(32, kernel_size=5, strides=2, padding='same'))
-    generator.add(BatchNormalization())
+    generator.add(Conv2DTranspose(64, kernel_size=5, strides=2, padding='same'))
+    generator.add(BatchNormalization(momentum=0.8))
     generator.add(LeakyReLU(0.2))
 
 

@@ -117,15 +117,15 @@ def main(config_path, save_dir, data_dir):
 
     print(d_loss_fake_data)
     plt.figure()
-    pd.Series(d_loss_fake_data).plot()
+    pd.Series(d_loss_fake_data).rolling(150).max().plot()
     plt.savefig("d_loss_fake_data.png")
 
     plt.figure()
-    pd.Series(d_loss_real_data).plot()
+    pd.Series(d_loss_real_data).rolling(150).max().plot()
     plt.savefig("d_loss_real_data.png")
 
     plt.figure()
-    pd.Series(g_loss_data).plot()
+    pd.Series(g_loss_data).rolling(150).max().plot()
     plt.savefig("g_loss_data.png")
 
 
