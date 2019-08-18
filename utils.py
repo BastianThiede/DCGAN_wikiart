@@ -74,7 +74,7 @@ def load_data(path=None):
         path = os.path.join(default_path, 'sample_data')
     search_path = os.path.join(path, '**/*.jpg')
     print('Searching at: {}'.format(search_path))
-    paths = glob(search_path)
+    paths = glob(search_path)[:5000]
     fpath = 'memmap_numpy_images.dat'
     data = np.memmap(fpath, dtype='float16', mode='w+',
                      shape=(len(paths), 64, 64, 3))
