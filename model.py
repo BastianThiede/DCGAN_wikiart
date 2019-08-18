@@ -55,12 +55,12 @@ def discriminator(input_shape=(32, 32, 3),nb_filter=64):
     # Conv 1: 16x16x64
     discriminator.add(GaussianNoise(0.2, input_shape=(64, 64, 3)))
 
-    discriminator.add(Conv2D(32, kernel_size=5, strides=2, padding='same',
+    discriminator.add(Conv2D(16, kernel_size=5, strides=2, padding='same',
                             kernel_initializer=init))
     discriminator.add(LeakyReLU(0.2))
 
     # Conv 2:
-    discriminator.add(Conv2D(64, kernel_size=5, strides=2, padding='same'))
+    discriminator.add(Conv2D(16, kernel_size=5, strides=2, padding='same'))
     discriminator.add(BatchNormalization())
     discriminator.add(LeakyReLU(0.2))
 
