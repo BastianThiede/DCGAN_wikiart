@@ -101,8 +101,6 @@ def build_gan(config_path):
                   metrics=['accuracy'],
                   optimizer=opt)
 
-
-
     return dcgan, d, g
 
 

@@ -13,7 +13,8 @@ def crawl_full():
         print('Parsing genre: {} {}/{}'.format(genre,i,len(genre_urls)))
         img_urls_genre = iter_through_genre(genre)
         print('Found {} links!'.format(len(img_urls_genre)))
-        with open('url_links_wikiart_full.txt', 'a') as f:
+        genre_name = genre.split('/')[-1]
+        with open('url_links_wikiart_genre_{}.txt'.format(genre_name), 'a') as f:
             for img_url in img_urls_genre:
                 f.write('{}\n'.format(img_url))
 
