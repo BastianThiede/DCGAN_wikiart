@@ -160,12 +160,12 @@ def sort_raw_files(unsorted_fpath):
     os.mkdir(new_path)
     for filename in os.listdir(genre_folder):
         genre_name = filename.split('_')[-1].replace('.txt', '')
-        print('Ordering: {}'.format(genre_name))
+        genre_path = os.path.join(new_path, genre_name)
+        os.mkdir(genre_path)
+        print('Ordering: {} to: {}'.format(genre_name,genre_path))
         with open(os.path.join(genre_folder, filename)) as f:
             files_to_move = f.read().split('\n')
             filenames = [x.split('/')[-1] for x in files_to_move]
-        genre_path = os.path.join(new_path, genre_name)
-        os.mkdir(genre_path)
         for fname in tqdm(filenames):
             os.rename(os.path.join(unsorted_fpath, fname),
                       os.path.join(genre_path, fname))
