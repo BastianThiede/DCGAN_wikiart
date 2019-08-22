@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 import cv2
 import random
+import shutil
 import multiprocessing
 
 
@@ -167,8 +168,8 @@ def sort_raw_files(unsorted_fpath):
             files_to_move = f.read().split('\n')
             filenames = [x.split('/')[-1] for x in files_to_move]
         for fname in tqdm(filenames):
-            os.rename(os.path.join(unsorted_fpath, fname),
-                      os.path.join(genre_path, fname))
+            shutil.move(os.path.join(unsorted_fpath, fname),
+                        os.path.join(genre_path, fname))
 
 
 if __name__ == '__main__':
