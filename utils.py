@@ -168,8 +168,11 @@ def sort_raw_files(unsorted_fpath):
             files_to_move = f.read().split('\n')
             filenames = [x.split('/')[-1] for x in files_to_move]
         for fname in tqdm(filenames):
-            shutil.move(os.path.join(unsorted_fpath, fname),
-                        os.path.join(genre_path, fname))
+            try:
+                shutil.move(os.path.join(unsorted_fpath, fname),
+                            os.path.join(genre_path, fname))
+            except FileNotFoundError:
+                print('Skipping: {}'.format(fname))
 
 
 if __name__ == '__main__':
