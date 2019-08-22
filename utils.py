@@ -154,10 +154,23 @@ def get_gan_paths(save_dir):
     dcgan_path = os.path.join(save_dir, 'dcgan.h5')
     return dcgan_path, discriminator_path, generator_path
 
+def sort_raw_files(unsorted_fpath):
+    genre_folder = 'genre_links'
+    new_path = '/tmp/wikiart_sorted'
+    os.path.mkdir(new_path)
+    for filename in os.listdir(genre_folder):
+        genre_name = filenames.split('_')[-1].replace('.txt', '')
+        print('Ordering: {}'.format(genre_name))
+        with open(os.path.join(genre_folder, filename)) as f:
+            files_to_move = f.read().split('\n')
+            filenames = [x.split('/')[-1] for x in files_to_move]
+        genre_path = os.path.join(new_path, genre_name)
+        os.path.mkdir(genre_path)
+        for fname in tqdm(filenames):
+            os.rename(os.path.join(unsorted_fpath, fname),
+                      os.path.join(genre_path, fname))
+
 
 if __name__ == '__main__':
-    print(load_config())
-    data = load_data()
-    sample = data[0]
-    print(sample.shape)
-    display_images(data)
+    import sys
+    sort_raw_files(sys.argv[1])
