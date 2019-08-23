@@ -1,7 +1,7 @@
 from keras.initializers import RandomNormal
 from keras.layers import (ZeroPadding2D,
                           Conv2DTranspose, Conv2D, BatchNormalization, Reshape,
-                          Dense, LeakyReLU,GaussianNoise,
+                          Dense, LeakyReLU,GaussianNoise,ReLU,
                           Flatten, UpSampling2D)
 from keras.models import Sequential
 from utils import load_config
@@ -21,16 +21,16 @@ def generator(input_dim=100,units=1024,activation='relu'):
     # Conv 2: 8x8x128
     generator.add(Conv2DTranspose(512, kernel_size=5, strides=2, padding='same'))
     generator.add(BatchNormalization(momentum=0.8))
-    generator.add(LeakyReLU(0.2))
+    generator.add(ReLU())
 
     # Conv 3: 16x16x64
     generator.add(Conv2DTranspose(256, kernel_size=5, strides=2, padding='same'))
     generator.add(BatchNormalization(momentum=0.8))
-    generator.add(LeakyReLU(0.2))
+    generator.add(ReLU())
 
     generator.add(Conv2DTranspose(128, kernel_size=5, strides=2, padding='same'))
     generator.add(BatchNormalization(momentum=0.8))
-    generator.add(LeakyReLU(0.2))
+    generator.add(ReLU())
 
 
     generator.add(Conv2DTranspose(3, kernel_size=5, strides=2, padding='same',
