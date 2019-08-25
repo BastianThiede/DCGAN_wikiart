@@ -1,7 +1,7 @@
 from keras.initializers import RandomNormal
 from keras.layers import (ZeroPadding2D,
                           Conv2DTranspose, Conv2D, BatchNormalization, Reshape,
-                          Dense, LeakyReLU,GaussianNoise,ReLU,
+                          Dense, LeakyReLU,GaussianNoise,ReLU,Dropout,
                           Flatten, UpSampling2D)
 from keras.models import Sequential
 from utils import load_config
@@ -20,21 +20,21 @@ def generator(input_dim=100,units=1024,activation='relu'):
 
     # Conv 2: 8x8x128
     generator.add(Conv2DTranspose(1024, kernel_size=5, strides=2, padding='same'))
-    generator.add(BatchNormalization(momentum=0.6))
+    generator.add(BatchNormalization(momentum=0.8))
     generator.add(ReLU())
 
     # Conv 3: 16x16x64
     generator.add(Conv2DTranspose(512, kernel_size=5, strides=2, padding='same'))
-    generator.add(BatchNormalization(momentum=0.6))
+    generator.add(BatchNormalization(momentum=0.8))
     generator.add(ReLU())
 
     generator.add(Conv2DTranspose(256, kernel_size=5, strides=2, padding='same'))
-    generator.add(BatchNormalization(momentum=0.6))
+    generator.add(BatchNormalization(momentum=0.8))
     generator.add(ReLU())
 
     generator.add(
         Conv2DTranspose(128, kernel_size=5, strides=2, padding='same'))
-    generator.add(BatchNormalization(momentum=0.6))
+    generator.add(BatchNormalization(momentum=0.8))
     generator.add(ReLU())
 
 
@@ -50,26 +50,31 @@ def discriminator(input_shape=(32, 32, 3),nb_filter=64):
 
     # Conv 1: 16x16x64
 
-    discriminator.add(Conv2D(128, input_shape=(128, 128, 3), kernel_size=5, strides=2, padding='same',
+    discriminator.add(Conv2D(32, input_shape=(128, 128, 3), kernel_size=5, strides=2, padding='same',
                             kernel_initializer=init))
     discriminator.add(LeakyReLU(0.2))
 
-    discriminator.add(Conv2D(256, kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.6))
+    discriminator.add(Conv2D(64, kernel_size=5, strides=2, padding='same'))
+    discriminator.add(ZeroPadding2D(padding=((0,1),(0,1))))
     discriminator.add(LeakyReLU(0.2))
+    discriminator.add(BatchNormalization(momentum=0.8))
+
     # Conv 2:
-    discriminator.add(Conv2D(512, kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.6))
+    discriminator.add(Conv2D(128, kernel_size=5, strides=2, padding='same'))
     discriminator.add(LeakyReLU(0.2))
+    discriminator.add(BatchNormalization(momentum=0.8))
+
 
     # Conv 3:
-    discriminator.add(Conv2D(1024, kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.6))
+    discriminator.add(Conv2D(256, kernel_size=5, strides=2, padding='same'))
     discriminator.add(LeakyReLU(0.2))
+    discriminator.add(BatchNormalization(momentum=0.8))
+
 
     discriminator.add(Conv2D(2048, kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.6))
     discriminator.add(LeakyReLU(0.2))
+    discriminator.add(BatchNormalization(momentum=0.8))
+
 
     # FC
     discriminator.add(Flatten())
