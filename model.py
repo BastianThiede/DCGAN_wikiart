@@ -20,21 +20,21 @@ def generator(input_dim=100,units=1024,activation='relu'):
 
     # Conv 2: 8x8x128
     generator.add(Conv2DTranspose(1024, kernel_size=5, strides=2, padding='same'))
-    generator.add(BatchNormalization())
+    generator.add(BatchNormalization(momentum=0.6))
     generator.add(ReLU())
 
     # Conv 3: 16x16x64
     generator.add(Conv2DTranspose(512, kernel_size=5, strides=2, padding='same'))
-    generator.add(BatchNormalization())
+    generator.add(BatchNormalization(momentum=0.6))
     generator.add(ReLU())
 
     generator.add(Conv2DTranspose(256, kernel_size=5, strides=2, padding='same'))
-    generator.add(BatchNormalization())
+    generator.add(BatchNormalization(momentum=0.6))
     generator.add(ReLU())
 
     generator.add(
         Conv2DTranspose(128, kernel_size=5, strides=2, padding='same'))
-    generator.add(BatchNormalization())
+    generator.add(BatchNormalization(momentum=0.6))
     generator.add(ReLU())
 
 
@@ -55,20 +55,20 @@ def discriminator(input_shape=(32, 32, 3),nb_filter=64):
     discriminator.add(LeakyReLU(0.2))
 
     discriminator.add(Conv2D(256, kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization())
+    discriminator.add(BatchNormalization(momentum=0.6))
     discriminator.add(LeakyReLU(0.2))
     # Conv 2:
     discriminator.add(Conv2D(512, kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization())
+    discriminator.add(BatchNormalization(momentum=0.6))
     discriminator.add(LeakyReLU(0.2))
 
     # Conv 3:
     discriminator.add(Conv2D(1024, kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization())
+    discriminator.add(BatchNormalization(momentum=0.6))
     discriminator.add(LeakyReLU(0.2))
 
-    discriminator.add(Conv2D(1400, kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization())
+    discriminator.add(Conv2D(2048, kernel_size=5, strides=2, padding='same'))
+    discriminator.add(BatchNormalization(momentum=0.6))
     discriminator.add(LeakyReLU(0.2))
 
     # FC
