@@ -67,7 +67,7 @@ def discriminator(input_shape=(32, 32, 3),nb_filter=64):
     discriminator.add(BatchNormalization())
     discriminator.add(LeakyReLU(0.2))
 
-    discriminator.add(Conv2D(1536, kernel_size=5, strides=2, padding='same'))
+    discriminator.add(Conv2D(1280, kernel_size=5, strides=2, padding='same'))
     discriminator.add(BatchNormalization())
     discriminator.add(LeakyReLU(0.2))
 
