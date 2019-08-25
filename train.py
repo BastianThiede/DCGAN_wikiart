@@ -3,8 +3,11 @@ from model import build_gan
 import numpy as np
 from time import time
 import argparse
+import random
 import os
 from tqdm import tqdm
+import matplotlib.pyplot as plt
+import pandas as pd
 
 def train_batches(config_path, save_dir, data_dir):
     config = load_config(config_path)
@@ -73,18 +76,29 @@ def main(config_path, save_dir, data_dir):
     print("-------------------")
 
     z_pred = np.array([np.random.normal(0, 0.5, 100) for _ in range(100)])
-    y_g = [1] * batch_size
     y_d_true = [1] * batch_size
-    y_d_gen = [0] * batch_size
+    d_loss_fake_data = list()
+    d_loss_real_data = list()
+    g_loss_data = list()
     for epoch in range(epochs):
+        y_g = [(1 - random.randrange(0, 5) / 100.) for _ in range(batch_size)]
+        y_d_gen = [random.randrange(0, 5) / 100. for _ in range(batch_size)]
+
         start = time()
-        for index in tqdm(range(num_batches)):
+        batches = list(range(num_batches))
+        random.shuffle(batches)
+
+        for index in tqdm(batches):
             d_loss_fake, d_loss_real, g_loss = train_batch(X_train, batch_size,
                                                            dcgan,
                                                            discriminator,
                                                            generator, index,
                                                            y_d_gen, y_d_true,
                                                            y_g)
+            d_loss_fake_data.append(d_loss_fake[0])
+            d_loss_real_data.append(d_loss_real[0])
+            g_loss_data.append(g_loss[0])
+
         end = time() - start
         # save generated images
         print('D-loss-real: {}, D-loss-fake: {}, '
@@ -100,6 +114,19 @@ def main(config_path, save_dir, data_dir):
             dcgan.save(dcgan_path)
             images = generator.predict(z_pred)
             save_images(images, 'dcgan_keras_epoch_{}.png'.format(epoch))
+
+    print(d_loss_fake_data)
+    plt.figure()
+    pd.Series(d_loss_fake_data).rolling(150).max().plot()
+    plt.savefig("d_loss_fake_data.png")
+
+    plt.figure()
+    pd.Series(d_loss_real_data).rolling(150).max().plot()
+    plt.savefig("d_loss_real_data.png")
+
+    plt.figure()
+    pd.Series(g_loss_data).rolling(150).max().plot()
+    plt.savefig("g_loss_data.png")
 
 
 def load_or_create_model(config_path, dcgan_path, discriminator_path,
@@ -118,6 +145,7 @@ def load_or_create_model(config_path, dcgan_path, discriminator_path,
 def train_batch(X_train, batch_size, dcgan, discriminator, generator, index,
                 y_d_gen, y_d_true, y_g):
     X_d_true = X_train[index * batch_size:(index + 1) * batch_size]
+
     #X_d_true = X_d_true.view(dtype=np.float32, type=np.ndarray)
     X_g = np.array([np.random.normal(0, 0.5, 100) for _ in range(batch_size)])
     X_d_gen = generator.predict(X_g, verbose=0)

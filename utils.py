@@ -8,10 +8,11 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 import cv2
 import random
+import shutil
 import multiprocessing
 
 
-def load_image(image_path, input_height=256, input_width=256):
+def load_image(image_path, input_height=64, input_width=64):
     try:
         img = cv2.imread(image_path)
         new_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -74,10 +75,10 @@ def load_data(path=None):
         path = os.path.join(default_path, 'sample_data')
     search_path = os.path.join(path, '**/*.jpg')
     print('Searching at: {}'.format(search_path))
-    paths = glob(search_path)
+    paths = glob(search_path)[:5000]
     fpath = 'memmap_numpy_images.dat'
-    data = np.memmap(fpath, dtype='float32', mode='w+',
-                     shape=(len(paths), 256, 256, 3))
+    data = np.memmap(fpath, dtype='float16', mode='w+',
+                     shape=(len(paths), 64, 64, 3))
     pool = multiprocessing.Pool()
     counter = 0
     for img in tqdm(pool.imap_unordered(load_image, paths),total=len(paths)):
@@ -154,10 +155,26 @@ def get_gan_paths(save_dir):
     dcgan_path = os.path.join(save_dir, 'dcgan.h5')
     return dcgan_path, discriminator_path, generator_path
 
+def sort_raw_files(unsorted_fpath):
+    genre_folder = 'genre_links'
+    new_path = '/tmp/wikiart_sorted'
+    os.mkdir(new_path)
+    for filename in os.listdir(genre_folder):
+        genre_name = filename.split('_')[-1].replace('.txt', '')
+        genre_path = os.path.join(new_path, genre_name)
+        os.mkdir(genre_path)
+        print('Ordering: {} to: {}'.format(genre_name,genre_path))
+        with open(os.path.join(genre_folder, filename)) as f:
+            files_to_move = f.read().split('\n')
+            filenames = [x.split('/')[-1] for x in files_to_move[:-1]]
+        for fname in tqdm(filenames):
+            try:
+                shutil.copyfile(os.path.join(unsorted_fpath, fname),
+                                os.path.join(genre_path, fname))
+            except FileNotFoundError:
+                print('Skipping: {}'.format(fname))
+
 
 if __name__ == '__main__':
-    print(load_config())
-    data = load_data()
-    sample = data[0]
-    print(sample.shape)
-    display_images(data)
+    import sys
+    sort_raw_files(sys.argv[1])

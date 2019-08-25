@@ -1,93 +1,65 @@
 from keras.initializers import RandomNormal
 from keras.layers import (ZeroPadding2D,
                           Conv2DTranspose, Conv2D, BatchNormalization, Reshape,
-                          Dense, LeakyReLU,
+                          Dense, LeakyReLU,GaussianNoise,ReLU,
                           Flatten, UpSampling2D)
 from keras.models import Sequential
 from utils import load_config
 from keras.optimizers import Adam
 from keras.utils import multi_gpu_model
 
-
-def generator(input_dim=100, units=1024, activation='relu'):
+def generator(input_dim=100,units=1024,activation='relu'):
     init = RandomNormal(stddev=0.02)
 
     # Generator network
     generator = Sequential()
-
     # FC: 2x2x512
-    generator.add(
-        Dense(4 * 4 * 1024, input_shape=(input_dim,), kernel_initializer=init)
-    )
-    generator.add(Reshape((4, 4, 1024)))
-    generator.add(BatchNormalization())
-    generator.add(LeakyReLU(0.2))
-
+    generator.add(Dense(2*2*1024,input_shape=(input_dim,), kernel_initializer=init))
+    generator.add(Reshape((2, 2, 1024)))
     generator.add(UpSampling2D())
 
-    # # Conv 1: 4x4x256
-
-    generator.add(
-        Conv2DTranspose(512, kernel_size=4, strides=2, padding='same')
-    )
-    generator.add(BatchNormalization())
-    generator.add(LeakyReLU(0.2))
-
     # Conv 2: 8x8x128
-    generator.add(
-        Conv2DTranspose(256, kernel_size=4, strides=2, padding='same'))
-    generator.add(BatchNormalization())
-    generator.add(LeakyReLU(0.2))
+    generator.add(Conv2DTranspose(512, kernel_size=5, strides=2, padding='same'))
+    generator.add(BatchNormalization(momentum=0.8))
+    generator.add(ReLU())
 
     # Conv 3: 16x16x64
-    generator.add(
-        Conv2DTranspose(128, kernel_size=4, strides=2, padding='same'))
-    generator.add(BatchNormalization())
-    generator.add(LeakyReLU(0.2))
+    generator.add(Conv2DTranspose(256, kernel_size=5, strides=2, padding='same'))
+    generator.add(BatchNormalization(momentum=0.8))
+    generator.add(ReLU())
 
-    generator.add(
-        Conv2DTranspose(64, kernel_size=4, strides=2, padding='same'))
-    generator.add(BatchNormalization())
-    generator.add(LeakyReLU(0.2))
+    generator.add(Conv2DTranspose(128, kernel_size=5, strides=2, padding='same'))
+    generator.add(BatchNormalization(momentum=0.8))
+    generator.add(ReLU())
 
-    # Conv 4: 32x32x3
-    generator.add(Conv2DTranspose(3, kernel_size=4, strides=2, padding='same',
+
+    generator.add(Conv2DTranspose(3, kernel_size=5, strides=2, padding='same',
                                   activation='tanh'))
     print(generator.summary())
     return generator
 
-
-def discriminator():
+def discriminator(input_shape=(32, 32, 3),nb_filter=64):
     init = RandomNormal(stddev=0.02)
 
     discriminator = Sequential()
 
     # Conv 1: 16x16x64
-    discriminator.add(Conv2D(32, kernel_size=4, strides=2, padding='same',
-                             input_shape=(256, 256, 3),
-                             kernel_initializer=init))
+
+    discriminator.add(Conv2D(64, input_shape=(64, 64, 3), kernel_size=5, strides=2, padding='same',
+                            kernel_initializer=init))
     discriminator.add(LeakyReLU(0.2))
 
     # Conv 2:
-    discriminator.add(Conv2D(64, kernel_size=4, strides=2, padding='same'))
+    discriminator.add(Conv2D(128, kernel_size=5, strides=2, padding='same'))
     discriminator.add(BatchNormalization())
     discriminator.add(LeakyReLU(0.2))
 
     # Conv 3:
-    discriminator.add(Conv2D(128, kernel_size=4, strides=2, padding='same'))
+    discriminator.add(Conv2D(256, kernel_size=5, strides=2, padding='same'))
     discriminator.add(BatchNormalization())
     discriminator.add(LeakyReLU(0.2))
 
-    # Conv 3:
-    discriminator.add(Conv2D(256, kernel_size=4, strides=2, padding='same'))
-    discriminator.add(BatchNormalization())
-    discriminator.add(LeakyReLU(0.2))
-
-    discriminator.add(Conv2D(512, kernel_size=4, strides=2, padding='same'))
-    discriminator.add(BatchNormalization())
-    discriminator.add(LeakyReLU(0.2))
-
-    discriminator.add(Conv2D(512, kernel_size=4, strides=2, padding='same'))
+    discriminator.add(Conv2D(512, kernel_size=5, strides=2, padding='same'))
     discriminator.add(BatchNormalization())
     discriminator.add(LeakyReLU(0.2))
 
@@ -98,7 +70,6 @@ def discriminator():
     discriminator.add(Dense(1, activation='sigmoid'))
     print(discriminator.summary())
     return discriminator
-
 
 def build_gan(config_path):
     config = load_config(config_path)
@@ -123,8 +94,6 @@ def build_gan(config_path):
     dcgan.compile(loss='binary_crossentropy',
                   metrics=['accuracy'],
                   optimizer=opt)
-
-
 
     return dcgan, d, g
 
