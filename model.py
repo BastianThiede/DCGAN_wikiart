@@ -16,35 +16,33 @@ def generator(input_dim=100,units=1024,activation='relu'):
     # FC: 2x2x512
     generator.add(Dense(2*2*1024,input_shape=(input_dim,), kernel_initializer=init))
     generator.add(Reshape((2, 2, 1024)))
-    generator.add(UpSampling2D())
 
     # Conv 2: 8x8x128
-    generator.add(Conv2DTranspose(512, kernel_size=5, strides=2, padding='same'))
-    generator.add(BatchNormalization())
+    generator.add(Conv2DTranspose(1024, kernel_size=5, padding='same'))
     generator.add(ReLU())
-    generator.add(UpSampling2D())
 
     # Conv 3: 16x16x64
-    generator.add(Conv2DTranspose(256, kernel_size=5, strides=2, padding='same'))
+    generator.add(Conv2D(512, kernel_size=5, padding='same'))
     generator.add(BatchNormalization())
     generator.add(ReLU())
     generator.add(UpSampling2D())
 
-
-    generator.add(Conv2DTranspose(128, kernel_size=5, strides=2, padding='same'))
+    generator.add(Conv2D(256, kernel_size=5, padding='same'))
     generator.add(BatchNormalization())
     generator.add(ReLU())
     generator.add(UpSampling2D())
 
-
-    generator.add(Conv2DTranspose(64, kernel_size=5, strides=2, padding='same'))
+    generator.add(Conv2D(128, kernel_size=5, padding='same'))
     generator.add(BatchNormalization())
     generator.add(ReLU())
     generator.add(UpSampling2D())
 
+    generator.add(Conv2D(64, kernel_size=5, padding='same'))
+    generator.add(BatchNormalization())
+    generator.add(ReLU())
+    generator.add(UpSampling2D())
 
-
-    generator.add(Conv2DTranspose(3, kernel_size=5, strides=2, padding='same',
+    generator.add(Conv2D(3, kernel_size=5, padding='same',
                                   activation='tanh'))
     print(generator.summary())
     return generator
