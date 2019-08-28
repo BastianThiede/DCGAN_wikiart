@@ -18,8 +18,11 @@ def generator(input_dim=100,units=1024,activation='relu'):
     generator.add(Reshape((2, 2, 1024)))
 
     # Conv 2: 8x8x128
-    generator.add(Conv2DTranspose(1024, kernel_size=5, padding='same'))
+    generator.add(Conv2D(512, kernel_size=5, padding='same'))
+    generator.add(BatchNormalization())
     generator.add(ReLU())
+    generator.add(UpSampling2D())
+
 
     # Conv 3: 16x16x64
     generator.add(Conv2D(512, kernel_size=5, padding='same'))
@@ -37,7 +40,13 @@ def generator(input_dim=100,units=1024,activation='relu'):
     generator.add(ReLU())
     generator.add(UpSampling2D())
 
+
     generator.add(Conv2D(64, kernel_size=5, padding='same'))
+    generator.add(BatchNormalization())
+    generator.add(ReLU())
+    generator.add(UpSampling2D())
+
+    generator.add(Conv2D(32, kernel_size=5, padding='same'))
     generator.add(BatchNormalization())
     generator.add(ReLU())
     generator.add(UpSampling2D())
