@@ -49,7 +49,7 @@ def generator(input_dim=100,units=1024,activation='relu'):
     generator.add(UpSampling2D())
 
     generator.add(Conv2D(filters=3, kernel_size=3, padding='same',
-                                  activation='sigmoid'))
+                                  activation='tanh'))
     print(generator.summary())
     return generator
 
