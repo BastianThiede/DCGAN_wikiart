@@ -45,11 +45,10 @@ def generator(input_dim=100,units=1024,activation='relu'):
     generator.add(UpSampling2D())
 
     generator.add(Conv2D(filters=8, kernel_size=3, padding='same'))
-    generator.add(BatchNormalization(momentum=0.7))
     generator.add(ReLU())
     generator.add(UpSampling2D())
 
-    generator.add(Conv2D(3, kernel_size=3, strides=2, padding='same',
+    generator.add(Conv2D(filters=3, kernel_size=3, padding='same',
                                   activation='sigmoid'))
     print(generator.summary())
     return generator
