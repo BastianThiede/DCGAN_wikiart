@@ -1,6 +1,6 @@
 from keras.initializers import RandomNormal
 from keras.layers import (Conv2DTranspose, Conv2D, BatchNormalization, Reshape,
-                          Dense, LeakyReLU, ReLU, GaussianNoise, Dropout,
+                          Dense, LeakyReLU, ReLU, GaussianNoise, Dropout,Activation,
                           AveragePooling2D, Flatten, UpSampling2D)
 from keras.models import Sequential
 from keras.optimizers import Adam
@@ -48,8 +48,8 @@ def generator(input_dim=100,units=1024,activation='relu'):
     generator.add(ReLU())
     generator.add(UpSampling2D())
 
-    generator.add(Conv2D(filters=3, kernel_size=3,kernel_initializer=init, padding='same',
-                                  activation='tanh'))
+    generator.add(Conv2D(filters=3, kernel_size=3,kernel_initializer=init, padding='same'))
+    generator.add(Activation('sigmoid'))
     print(generator.summary())
     return generator
 
