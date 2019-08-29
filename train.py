@@ -147,7 +147,7 @@ def train_batch(X_train, batch_size, dcgan, discriminator, generator, index,
     X_d_true = X_train[index * batch_size:(index + 1) * batch_size]
 
     #X_d_true = X_d_true.view(dtype=np.float32, type=np.ndarray)
-    X_g = np.array([np.random.normal(0, 0.5, 100) for _ in range(batch_size)])
+    X_g = np.array([np.random.normal(0, 0.5, 4096) for _ in range(batch_size)])
     X_d_gen = generator.predict(X_g, verbose=0)
     # train discriminator
     d_loss_real = discriminator.train_on_batch(X_d_true, y_d_true)
