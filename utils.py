@@ -25,9 +25,9 @@ def load_image(image_path, input_height=256, input_width=256):
 
 def scale(img, reverse=False):
     if reverse:
-        return img/255.0
-    else:
         return img * 255.0
+    else:
+        return img / 255.0
 
 
 def combine_images_rgb(generated_images):
