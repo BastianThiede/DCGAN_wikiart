@@ -1,40 +1,56 @@
 from keras.initializers import RandomNormal
-from keras.layers import (ZeroPadding2D,
-                          Conv2DTranspose, Conv2D, BatchNormalization, Reshape,
-                          Dense, LeakyReLU,GaussianNoise,ReLU,
-                          Flatten, UpSampling2D)
+from keras.layers import (Conv2DTranspose, Conv2D, BatchNormalization, Reshape,
+                          Dense, LeakyReLU, ReLU, GaussianNoise, Dropout,
+                          AveragePooling2D, Flatten, UpSampling2D)
 from keras.models import Sequential
-from utils import load_config
 from keras.optimizers import Adam
 from keras.utils import multi_gpu_model
+
+from utils import load_config
+
 
 def generator(input_dim=100,units=1024,activation='relu'):
     init = RandomNormal(stddev=0.02)
 
     # Generator network
     generator = Sequential()
-    # FC: 2x2x512
-    generator.add(Dense(2*2*1024,input_shape=(input_dim,), kernel_initializer=init))
-    generator.add(Reshape((2, 2, 1024)))
+    generator.add(Reshape(target_shape=[1, 1, 4096], input_shape=[4096]))
+
+    generator.add(Conv2DTranspose(filters=256, kernel_size=4))
+    generator.add(ReLU())
+
+    generator.add(Conv2D(filters=256, kernel_size=4, padding='same'))
+    generator.add(BatchNormalization(momentum=0.7))
+    generator.add(ReLU())
     generator.add(UpSampling2D())
 
-    # Conv 2: 8x8x128
-    generator.add(Conv2DTranspose(512, kernel_size=5, strides=2, padding='same'))
-    generator.add(BatchNormalization(momentum=0.8))
+    generator.add(Conv2D(filters=128, kernel_size=4, padding='same'))
+    generator.add(BatchNormalization(momentum=0.7))
     generator.add(ReLU())
+    generator.add(UpSampling2D())
 
-    # Conv 3: 16x16x64
-    generator.add(Conv2DTranspose(256, kernel_size=5, strides=2, padding='same'))
-    generator.add(BatchNormalization(momentum=0.8))
+    generator.add(Conv2D(filters=64, kernel_size=3, padding='same'))
+    generator.add(BatchNormalization(momentum=0.7))
     generator.add(ReLU())
+    generator.add(UpSampling2D())
 
-    generator.add(Conv2DTranspose(128, kernel_size=5, strides=2, padding='same'))
-    generator.add(BatchNormalization(momentum=0.8))
+    generator.add(Conv2D(filters=32, kernel_size=3, padding='same'))
+    generator.add(BatchNormalization(momentum=0.7))
     generator.add(ReLU())
+    generator.add(UpSampling2D())
 
+    generator.add(Conv2D(filters=16, kernel_size=3, padding='same'))
+    generator.add(BatchNormalization(momentum=0.7))
+    generator.add(ReLU())
+    generator.add(UpSampling2D())
 
-    generator.add(Conv2DTranspose(3, kernel_size=5, strides=2, padding='same',
-                                  activation='tanh'))
+    generator.add(Conv2D(filters=8, kernel_size=3, padding='same'))
+    generator.add(BatchNormalization(momentum=0.7))
+    generator.add(ReLU())
+    generator.add(UpSampling2D())
+
+    generator.add(Conv2D(3, kernel_size=3, strides=2, padding='same',
+                                  activation='sigmoid'))
     print(generator.summary())
     return generator
 
@@ -45,26 +61,43 @@ def discriminator(input_shape=(32, 32, 3),nb_filter=64):
 
     # Conv 1: 16x16x64
 
-    discriminator.add(Conv2D(64, input_shape=(64, 64, 3), kernel_size=5, strides=2, padding='same',
-                            kernel_initializer=init))
-    discriminator.add(LeakyReLU(0.2))
+    discriminator.add(GaussianNoise(0.2, input_shape=[256, 256, 3]))
 
-    # Conv 2:
-    discriminator.add(Conv2D(128, kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization())
+    discriminator.add(Conv2D(8, kernel_size=3, padding='same'))
     discriminator.add(LeakyReLU(0.2))
+    discriminator.add(Dropout(0.25))
+    discriminator.add(AveragePooling2D())
 
-    # Conv 3:
-    discriminator.add(Conv2D(256, kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization())
+    discriminator.add(Conv2D(16, kernel_size=3, padding='same'))
     discriminator.add(LeakyReLU(0.2))
+    discriminator.add(Dropout(0.25))
+    discriminator.add(AveragePooling2D())
 
-    discriminator.add(Conv2D(512, kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization())
+    discriminator.add(Conv2D(32, kernel_size=3, padding='same'))
     discriminator.add(LeakyReLU(0.2))
+    discriminator.add(Dropout(0.25))
+    discriminator.add(AveragePooling2D())
+
+    discriminator.add(Conv2D(64, kernel_size=3, padding='same'))
+    discriminator.add(LeakyReLU(0.2))
+    discriminator.add(Dropout(0.25))
+    discriminator.add(AveragePooling2D())
+
+    discriminator.add(Conv2D(128, kernel_size=3, padding='same'))
+    discriminator.add(LeakyReLU(0.2))
+    discriminator.add(Dropout(0.25))
+    discriminator.add(AveragePooling2D())
+
+    discriminator.add(Conv2D(256, kernel_size=3, padding='same'))
+    discriminator.add(LeakyReLU(0.2))
+    discriminator.add(Dropout(0.25))
+    discriminator.add(AveragePooling2D())
 
     # FC
     discriminator.add(Flatten())
+
+    discriminator.add(Dense(128))
+    discriminator.add(LeakyReLU(0.2))
 
     # Output
     discriminator.add(Dense(1, activation='sigmoid'))

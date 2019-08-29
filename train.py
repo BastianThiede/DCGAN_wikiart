@@ -75,7 +75,7 @@ def main(config_path, save_dir, data_dir):
     print("Total epoch:", config['epochs'], "Number of batches:", num_batches)
     print("-------------------")
 
-    z_pred = np.array([np.random.normal(0, 0.5, 100) for _ in range(100)])
+    z_pred = np.array([np.random.normal(0, 0.5, 4096) for _ in range(100)])
     y_d_true = [1] * batch_size
     d_loss_fake_data = list()
     d_loss_real_data = list()
