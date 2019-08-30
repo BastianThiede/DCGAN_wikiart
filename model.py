@@ -17,7 +17,7 @@ def generator(input_dim=100,units=1024,activation='relu'):
     generator.add(Reshape(target_shape=[1, 1, 4096], input_shape=[4096]))
 
     generator.add(Conv2DTranspose(filters=256, kernel_size=4,))
-    generator.add(ReLU())
+    generator.add(LeakyReLU(0.2))
 
     generator.add(Conv2D(filters=256, kernel_size=4, padding='same'))
     generator.add(BatchNormalization(momentum=0.7))
