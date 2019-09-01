@@ -14,10 +14,14 @@ def generator(input_dim=100,units=1024,activation='relu'):
 
     # Generator network
     generator = Sequential()
-    generator.add(Reshape(target_shape=[1, 1, 4096], input_shape=[4096]))
+    generator.add(Dense(4*4*256, input_dim=100))
+    generator.add(Activation('tanh'))
+    generator.add(Reshape((4, 4, 256)))
 
-    generator.add(Conv2DTranspose(filters=256, kernel_size=4,))
-    generator.add(LeakyReLU(0.2))
+    generator.add(Conv2D(filters=256, kernel_size=4, padding='same'))
+    generator.add(BatchNormalization(momentum=0.6))
+    generator.add(ReLU())
+    generator.add(UpSampling2D())
 
     generator.add(Conv2D(filters=256, kernel_size=4, padding='same'))
     generator.add(BatchNormalization(momentum=0.6))
