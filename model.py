@@ -14,9 +14,9 @@ def generator(input_dim=100,units=1024,activation='relu'):
 
     # Generator network
     generator = Sequential()
-    generator.add(Dense(4*4*128, input_dim=100))
+    generator.add(Dense(4*4*512, input_dim=100))
     generator.add(Activation('tanh'))
-    generator.add(Reshape((4, 4, 128)))
+    generator.add(Reshape((4, 4, 512)))
 
     generator.add(Conv2D(filters=256, kernel_size=4, padding='same'))
     generator.add(BatchNormalization(momentum=0.6))
@@ -94,7 +94,6 @@ def discriminator(input_shape=(32, 32, 3),nb_filter=64):
     discriminator.add(BatchNormalization(momentum=0.6))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
-    discriminator.add(AveragePooling2D())
 
     # FC
     discriminator.add(Flatten())
