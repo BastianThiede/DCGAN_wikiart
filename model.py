@@ -23,11 +23,6 @@ def generator(input_dim=100,units=1024,activation='relu'):
     generator.add(ReLU())
     generator.add(UpSampling2D())
 
-    generator.add(Conv2D(filters=256, kernel_size=4, padding='same'))
-    generator.add(BatchNormalization(momentum=0.6))
-    generator.add(ReLU())
-    generator.add(UpSampling2D())
-
     generator.add(Conv2D(filters=128, kernel_size=4, padding='same'))
     generator.add(BatchNormalization(momentum=0.6))
     generator.add(ReLU())
