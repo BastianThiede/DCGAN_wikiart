@@ -92,9 +92,6 @@ def discriminator(input_shape=(32, 32, 3),nb_filter=64):
     # FC
     discriminator.add(Flatten())
 
-    discriminator.add(Dense(128))
-    discriminator.add(LeakyReLU(0.2))
-
     # Output
     discriminator.add(Dense(1,activation='sigmoid'))
     print(discriminator.summary())
