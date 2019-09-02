@@ -64,41 +64,44 @@ def discriminator(input_shape=(32, 32, 3),nb_filter=64):
     discriminator.add(Conv2D(8, kernel_size=3, padding='same'))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
+    discriminator.add(AveragePooling2D())
+
 
     discriminator.add(Conv2D(16, kernel_size=3, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.6))
+    discriminator.add(BatchNormalization(momentum=0.7))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
     discriminator.add(AveragePooling2D())
 
     discriminator.add(Conv2D(32, kernel_size=3, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.6))
+    discriminator.add(BatchNormalization(momentum=0.7))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
     discriminator.add(AveragePooling2D())
 
     discriminator.add(Conv2D(64, kernel_size=3, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.6))
+    discriminator.add(BatchNormalization(momentum=0.7))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
     discriminator.add(AveragePooling2D())
 
     discriminator.add(Conv2D(128, kernel_size=3, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.6))
+    discriminator.add(BatchNormalization(momentum=0.7))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
     discriminator.add(AveragePooling2D())
 
     discriminator.add(Conv2D(256, kernel_size=3, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.6))
+    discriminator.add(BatchNormalization(momentum=0.7))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
+    discriminator.add(AveragePooling2D())
 
     # FC
     discriminator.add(Flatten())
 
-    discriminator.add(Dense(128))
-    discriminator.add(LeakyReLU(0.2))
+    discriminator.add(Dense(256))
+    discriminator.add(Activation('sigmoid'))
 
     # Output
     discriminator.add(Dense(1,activation='sigmoid'))
