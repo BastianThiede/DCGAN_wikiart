@@ -61,9 +61,15 @@ def discriminator(input_shape=(32, 32, 3),nb_filter=64):
 
     discriminator.add(GaussianNoise(0.2, input_shape=[256, 256, 3]))
 
-    discriminator.add(Conv2D(8, kernel_size=3, padding='same'))
+    discriminator.add(Conv2D(4, kernel_size=3, padding='same'))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
+
+    discriminator.add(Conv2D(8, kernel_size=3, padding='same'))
+    discriminator.add(BatchNormalization(momentum=0.6))
+    discriminator.add(LeakyReLU(0.2))
+    discriminator.add(Dropout(0.25))
+    discriminator.add(AveragePooling2D())
 
     discriminator.add(Conv2D(16, kernel_size=3, padding='same'))
     discriminator.add(BatchNormalization(momentum=0.6))
@@ -77,13 +83,7 @@ def discriminator(input_shape=(32, 32, 3),nb_filter=64):
     discriminator.add(Dropout(0.25))
     discriminator.add(AveragePooling2D())
 
-    discriminator.add(Conv2D(64, kernel_size=3, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.6))
-    discriminator.add(LeakyReLU(0.2))
-    discriminator.add(Dropout(0.25))
-    discriminator.add(AveragePooling2D())
-
-    discriminator.add(Conv2D(128, kernel_size=4, padding='same'))
+    discriminator.add(Conv2D(64, kernel_size=4, padding='same'))
     discriminator.add(BatchNormalization(momentum=0.6))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
