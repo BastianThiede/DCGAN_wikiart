@@ -45,6 +45,7 @@ def generator(input_dim=100,units=1024,activation='relu'):
 
     generator.add(Conv2DTranspose(3, kernel_size=3,kernel_initializer=init, strides=2, padding='same',
                                   activation='tanh'))
+    generator.add(GaussianNoise(0.2))
     print(generator.summary())
     return generator
 
