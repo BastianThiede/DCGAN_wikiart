@@ -100,6 +100,9 @@ def discriminator(input_shape=(32, 32, 3),nb_filter=64):
     # FC
     discriminator.add(Flatten())
 
+    discriminator.add(Dense(256))
+    discriminator.add(Activation('sigmoid'))
+
     # Output
     discriminator.add(Dense(1,activation='sigmoid'))
     print(discriminator.summary())
