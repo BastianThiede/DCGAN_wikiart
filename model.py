@@ -15,7 +15,7 @@ def generator(input_dim=100,units=1024,activation='relu'):
     # Generator network
     generator = Sequential()
     # FC: 2x2x512
-    generator.add(Dense(2*2*1024,input_shape=(input_dim,), kernel_initializer=init))
+    generator.add(Dense(2*2*1024,input_shape=(input_dim,),activation='sigmoid',kernel_initializer=init))
     generator.add(Reshape((2, 2, 1024)))
     generator.add(UpSampling2D())
 
