@@ -14,21 +14,16 @@ def generator(input_dim=100,units=1024,activation='relu'):
 
     # Generator network
     generator = Sequential()
-    generator.add(Dense(4*4*1024, input_dim=100))
+    generator.add(Dense(4*4*512, input_dim=100))
     generator.add(Activation('tanh'))
-    generator.add(Reshape((4, 4, 1024)))
-
-    generator.add(Conv2D(filters=512, kernel_size=4, padding='same'))
-    generator.add(BatchNormalization(momentum=0.6))
-    generator.add(ReLU())
-    generator.add(UpSampling2D())
+    generator.add(Reshape((4, 4, 512)))
 
     generator.add(Conv2D(filters=256, kernel_size=4, padding='same'))
     generator.add(BatchNormalization(momentum=0.6))
     generator.add(ReLU())
     generator.add(UpSampling2D())
 
-    generator.add(Conv2D(filters=128, kernel_size=3, padding='same'))
+    generator.add(Conv2D(filters=128, kernel_size=4, padding='same'))
     generator.add(BatchNormalization(momentum=0.6))
     generator.add(ReLU())
     generator.add(UpSampling2D())
@@ -44,6 +39,11 @@ def generator(input_dim=100,units=1024,activation='relu'):
     generator.add(UpSampling2D())
 
     generator.add(Conv2D(filters=16, kernel_size=3, padding='same'))
+    generator.add(BatchNormalization(momentum=0.6))
+    generator.add(ReLU())
+    generator.add(UpSampling2D())
+
+    generator.add(Conv2D(filters=8, kernel_size=3, padding='same'))
     generator.add(ReLU())
     generator.add(UpSampling2D())
 
@@ -64,44 +64,41 @@ def discriminator(input_shape=(32, 32, 3),nb_filter=64):
     discriminator.add(Conv2D(8, kernel_size=3, padding='same'))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
-    discriminator.add(AveragePooling2D())
-
 
     discriminator.add(Conv2D(16, kernel_size=3, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.7))
+    discriminator.add(BatchNormalization(momentum=0.6))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
     discriminator.add(AveragePooling2D())
 
     discriminator.add(Conv2D(32, kernel_size=3, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.7))
+    discriminator.add(BatchNormalization(momentum=0.6))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
     discriminator.add(AveragePooling2D())
 
     discriminator.add(Conv2D(64, kernel_size=3, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.7))
+    discriminator.add(BatchNormalization(momentum=0.6))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
     discriminator.add(AveragePooling2D())
 
     discriminator.add(Conv2D(128, kernel_size=3, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.7))
+    discriminator.add(BatchNormalization(momentum=0.6))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
     discriminator.add(AveragePooling2D())
 
     discriminator.add(Conv2D(256, kernel_size=3, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.7))
+    discriminator.add(BatchNormalization(momentum=0.6))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
-    discriminator.add(AveragePooling2D())
 
     # FC
     discriminator.add(Flatten())
 
-    discriminator.add(Dense(256))
-    discriminator.add(Activation('sigmoid'))
+    discriminator.add(Dense(128))
+    discriminator.add(LeakyReLU(0.2))
 
     # Output
     discriminator.add(Dense(1,activation='sigmoid'))
