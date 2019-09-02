@@ -45,7 +45,6 @@ def generator(input_dim=100,units=1024,activation='relu'):
 
     generator.add(Conv2DTranspose(3, kernel_size=3,kernel_initializer=init, strides=2, padding='same',
                                   activation='tanh'))
-    generator.add(GaussianNoise(0.2))
     print(generator.summary())
     return generator
 
@@ -78,12 +77,6 @@ def discriminator(input_shape=(32, 32, 3),nb_filter=64):
     discriminator.add(Conv2D(256, kernel_size=5, kernel_initializer=init, strides=2, padding='same'))
     discriminator.add(BatchNormalization())
     discriminator.add(LeakyReLU(0.2))
-
-    discriminator.add(Conv2D(512, kernel_size=5, kernel_initializer=init, strides=2, padding='same'))
-    discriminator.add(BatchNormalization())
-    discriminator.add(LeakyReLU(0.2))
-
-
 
     # FC
     discriminator.add(Flatten())
