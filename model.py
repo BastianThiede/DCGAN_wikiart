@@ -19,27 +19,27 @@ def generator(input_dim=100,units=1024,activation='relu'):
     generator.add(Reshape((4, 4, 512)))
 
     generator.add(Conv2D(filters=256, kernel_size=4, padding='same'))
-    generator.add(BatchNormalization(momentum=0.6))
+    generator.add(BatchNormalization(momentum=0.7))
     generator.add(ReLU())
     generator.add(UpSampling2D())
 
     generator.add(Conv2D(filters=128, kernel_size=4, padding='same'))
-    generator.add(BatchNormalization(momentum=0.6))
+    generator.add(BatchNormalization(momentum=0.7))
     generator.add(ReLU())
     generator.add(UpSampling2D())
 
     generator.add(Conv2D(filters=64, kernel_size=3, padding='same'))
-    generator.add(BatchNormalization(momentum=0.6))
+    generator.add(BatchNormalization(momentum=0.7))
     generator.add(ReLU())
     generator.add(UpSampling2D())
 
     generator.add(Conv2D(filters=32, kernel_size=3, padding='same'))
-    generator.add(BatchNormalization(momentum=0.6))
+    generator.add(BatchNormalization(momentum=0.7))
     generator.add(ReLU())
     generator.add(UpSampling2D())
 
     generator.add(Conv2D(filters=16, kernel_size=3, padding='same'))
-    generator.add(BatchNormalization(momentum=0.6))
+    generator.add(BatchNormalization(momentum=0.7))
     generator.add(ReLU())
     generator.add(UpSampling2D())
 
@@ -68,31 +68,31 @@ def discriminator(input_shape=(32, 32, 3),nb_filter=64):
 
 
     discriminator.add(Conv2D(16, kernel_size=3, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.6))
+    discriminator.add(BatchNormalization(momentum=0.7))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
     discriminator.add(AveragePooling2D())
 
     discriminator.add(Conv2D(32, kernel_size=3, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.6))
+    discriminator.add(BatchNormalization(momentum=0.7))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
     discriminator.add(AveragePooling2D())
 
     discriminator.add(Conv2D(64, kernel_size=3, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.6))
+    discriminator.add(BatchNormalization(momentum=0.7))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
     discriminator.add(AveragePooling2D())
 
     discriminator.add(Conv2D(128, kernel_size=3, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.6))
+    discriminator.add(BatchNormalization(momentum=0.7))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
     discriminator.add(AveragePooling2D())
 
     discriminator.add(Conv2D(256, kernel_size=3, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.6))
+    discriminator.add(BatchNormalization(momentum=0.7))
     discriminator.add(LeakyReLU(0.2))
     discriminator.add(Dropout(0.25))
     discriminator.add(AveragePooling2D())
