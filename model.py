@@ -58,7 +58,6 @@ def discriminator(input_shape=(32, 32, 3),nb_filter=64):
     discriminator.add(Conv2D(16, kernel_size=5, strides=2, padding='same',
                             kernel_initializer=init))
     discriminator.add(LeakyReLU(0.2))
-    discriminator.add(AveragePooling2D())
 
 
     # Conv 2:
