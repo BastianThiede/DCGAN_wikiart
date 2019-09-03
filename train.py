@@ -76,7 +76,7 @@ def main(config_path, save_dir, data_dir):
     print("Total epoch:", config['epochs'], "Number of batches:", num_batches)
     print("-------------------")
 
-    z_pred = np.array([np.random.normal(0, 1, 100) for _ in range(100)])
+    z_pred = np.array([np.random.normal(0, 0.5, 100) for _ in range(100)])
     d_loss_fake_data = list()
     d_loss_real_data = list()
     g_loss_data = list()
@@ -120,7 +120,7 @@ def main(config_path, save_dir, data_dir):
         if epoch % 5 == 0:
             X_d_true = X_train[index * batch_size:(index + 1) * batch_size]
             X_g = np.array(
-                [np.random.normal(0, 1, 100) for _ in range(batch_size)])
+                [np.random.normal(0, 0.5, 100) for _ in range(batch_size)])
             X_d_gen = generator.predict(X_g, verbose=0)
 
             disc_preds_true = discriminator.predict(X_d_true)
@@ -181,7 +181,7 @@ def train_batch(X_train, batch_size, dcgan, discriminator, generator, index,
     X_d_true = X_train[index * batch_size:(index + 1) * batch_size]
 
     #X_d_true = X_d_true.view(dtype=np.float32, type=np.ndarray)
-    X_g = np.array([np.random.normal(0, 1, 100) for _ in range(batch_size)])
+    X_g = np.array([np.random.normal(0, 0.5, 100) for _ in range(batch_size)])
     X_d_gen = generator.predict(X_g, verbose=0)
     # train discriminator
     d_loss_real = discriminator.train_on_batch(X_d_true, y_d_true)
