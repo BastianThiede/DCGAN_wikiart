@@ -8,6 +8,7 @@ import os
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import pandas as pd
+from collections import Counter
 
 def train_batches(config_path, save_dir, data_dir):
     config = load_config(config_path)
@@ -115,6 +116,30 @@ def main(config_path, save_dir, data_dir):
               'D-loss-real-mean: {}, D-loss-fake-mean: {}'.format(
             d_loss_real, d_loss_fake, g_loss, epoch, end, mean_acc_real,
             mean_acc_fake))
+
+        if epoch % 5 == 0:
+            X_d_true = X_train[index * batch_size:(index + 1) * batch_size]
+            X_g = np.array(
+                [np.random.normal(0, 1, 100) for _ in range(batch_size)])
+            X_d_gen = generator.predict(X_g, verbose=0)
+
+            disc_preds_true = discriminator.predict(X_d_true)
+            disc_preds_fake = discriminator.predict(X_d_gen)
+            digitize_bins_true = np.digitize(disc_preds_true, np.arange(0, 1, 0.1))
+            digitize_bins_fake = np.digitize(disc_preds_fake, np.arange(0, 1, 0.1))
+
+            print(Counter(digitize_bins_true), 'True_pred_count')
+            print(np.mean(disc_preds_true), 'Mean_preds_true')
+            print(np.mean(y_d_true), 'Mean_preds_true_labels')
+
+            print(Counter(digitize_bins_fake), 'Fake_pred_count')
+            print(np.mean(disc_preds_fake), 'Mean_preds_fake')
+            print(np.mean(y_d_gen), 'Mean_preds_fake_labels')
+
+
+
+
+
 
         if epoch % 10 == 0:
             generator.save(generator_path)
