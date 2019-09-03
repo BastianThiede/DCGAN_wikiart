@@ -76,17 +76,20 @@ def main(config_path, save_dir, data_dir):
     print("-------------------")
 
     z_pred = np.array([np.random.normal(0, 1, 100) for _ in range(100)])
-    y_d_true = [1] * batch_size
     d_loss_fake_data = list()
     d_loss_real_data = list()
     g_loss_data = list()
     for epoch in range(epochs):
         y_g = [np.random.uniform(0.95,1.0) for _ in range(batch_size)]
         y_d_gen = [np.random.uniform(0.0,0.05) for _ in range(batch_size)]
+        y_d_true = [np.random.uniform(0.95, 1) for _ in range(batch_size)]
 
         start = time()
         batches = list(range(num_batches))
         random.shuffle(batches)
+
+        accuracy_real = list()
+        accuracy_fake = list()
 
         for index in tqdm(batches):
             d_loss_fake, d_loss_real, g_loss = train_batch(X_train, batch_size,
@@ -99,14 +102,19 @@ def main(config_path, save_dir, data_dir):
             d_loss_real_data.append(d_loss_real[0])
             g_loss_data.append(g_loss[0])
 
+            accuracy_fake.append(d_loss_fake[1])
+            accuracy_real.append(d_loss_real[1])
+
         end = time() - start
+        mean_acc_real = np.mean(accuracy_real)
+        mean_acc_fake = np.mean(accuracy_fake)
+
         # save generated images
         print('D-loss-real: {}, D-loss-fake: {}, '
-              'G-loss: {}, epoch: {}, time: {}'.format(d_loss_real,
-                                                       d_loss_fake,
-                                                       g_loss,
-                                                       epoch,
-                                                       end))
+              'G-loss: {}, epoch: {}, time: {}'
+              'D-loss-real-mean: {}, D-loss-fake-mean: {}'.format(
+            d_loss_real, d_loss_fake, g_loss, epoch, end, mean_acc_real,
+            mean_acc_fake))
 
         if epoch % 10 == 0:
             generator.save(generator_path)
