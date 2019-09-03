@@ -84,6 +84,8 @@ def discriminator(input_shape=(32, 32, 3),nb_filter=64):
     discriminator.add(Dense(1, activation='sigmoid'))
     print(discriminator.summary())
     return discriminator
+
+
 def build_gan(config_path):
     config = load_config(config_path)
     g = generator()

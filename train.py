@@ -125,16 +125,14 @@ def main(config_path, save_dir, data_dir):
 
             disc_preds_true = discriminator.predict(X_d_true)
             disc_preds_fake = discriminator.predict(X_d_gen)
-            digitize_bins_true = np.digitize(disc_preds_true, np.arange(0, 1, 0.1))
-            digitize_bins_fake = np.digitize(disc_preds_fake, np.arange(0, 1, 0.1))
-            print(Counter(digitize_bins_true[:,0]), 'True_pred_count')
+            print(Counter(np.round(disc_preds_true[:,0])), 'True_pred_count')
             print(np.mean(disc_preds_true), 'Mean_preds_true')
             print(np.std(disc_preds_true), 'Std_preds_true')
             print(np.mean(y_d_true), 'Mean_preds_true_labels')
-
-            print(Counter(digitize_bins_fake[:, 0]), 'Fake_pred_count')
+            print('-' * 72)
+            print(Counter(np.round(disc_preds_fake[:,0])), 'Fake_pred_count')
             print(np.mean(disc_preds_fake), 'Mean_preds_fake')
-            print(np.std(disc_preds_fake), 'Mean_preds_fake')
+            print(np.std(disc_preds_fake), 'Std_preds_fake')
             print(np.mean(y_d_gen), 'Mean_preds_fake_labels')
 
 
