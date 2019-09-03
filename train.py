@@ -111,7 +111,7 @@ def main(config_path, save_dir, data_dir):
 
         # save generated images
         print('D-loss-real: {}, D-loss-fake: {}, '
-              'G-loss: {}, epoch: {}, time: {}'
+              'G-loss: {}, epoch: {}, time: {}\n'
               'D-loss-real-mean: {}, D-loss-fake-mean: {}'.format(
             d_loss_real, d_loss_fake, g_loss, epoch, end, mean_acc_real,
             mean_acc_fake))
