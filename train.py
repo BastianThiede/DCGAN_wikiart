@@ -81,9 +81,9 @@ def main(config_path, save_dir, data_dir):
     d_loss_real_data = list()
     g_loss_data = list()
     for epoch in range(epochs):
-        y_g = [np.random.uniform(0.95,1.0) for _ in range(batch_size)]
-        y_d_gen = [np.random.uniform(0.0,0.05) for _ in range(batch_size)]
-        y_d_true = [np.random.uniform(0.95, 1) for _ in range(batch_size)]
+        y_g = [1 for _ in range(batch_size)]
+        y_d_gen = [0 for _ in range(batch_size)]
+        y_d_true = [1 for _ in range(batch_size)]
 
         start = time()
         batches = list(range(num_batches))
