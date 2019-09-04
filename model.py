@@ -15,7 +15,8 @@ def generator(input_dim=100,units=1024,activation='relu'):
     # Generator network
     generator = Sequential()
     # FC: 2x2x512
-    generator.add(Dense(4*4*1024,input_shape=(input_dim,),activation='sigmoid',kernel_initializer=init))
+    generator.add(Dense(4*4*1024,input_shape=(input_dim,),
+                        activation='linear',kernel_initializer=init))
     generator.add(Reshape((4, 4, 1024)))
 
     # Conv 2: 8x8x128
@@ -42,7 +43,7 @@ def generator(input_dim=100,units=1024,activation='relu'):
     generator.add(BatchNormalization(momentum=0.8))
     generator.add(ReLU())
 
-    generator.add(Conv2DTranspose(3, kernel_size=3,kernel_initializer=init, strides=2, padding='same',
+    generator.add(Conv2DTranspose(3, kernel_size=5,kernel_initializer=init, strides=2, padding='same',
                                   activation='tanh'))
     print(generator.summary())
     return generator
