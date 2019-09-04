@@ -62,19 +62,19 @@ def discriminator(input_shape=(32, 32, 3),nb_filter=64):
 
     # Conv 2:
     discriminator.add(Conv2D(32,kernel_initializer=init, kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.7))
+    discriminator.add(BatchNormalization())
     discriminator.add(LeakyReLU(0.2))
 
     discriminator.add(Conv2D(64,kernel_initializer=init, kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.7))
+    discriminator.add(BatchNormalization())
     discriminator.add(LeakyReLU(0.2))
 
     discriminator.add(Conv2D(128,kernel_initializer=init, kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.7))
+    discriminator.add(BatchNormalization())
     discriminator.add(LeakyReLU(0.2))
 
     discriminator.add(Conv2D(256,kernel_initializer=init, kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization(momentum=0.7))
+    discriminator.add(BatchNormalization())
     discriminator.add(LeakyReLU(0.2))
 
     discriminator.add(Conv2D(512,kernel_initializer=init, kernel_size=5, strides=2, padding='same'))
