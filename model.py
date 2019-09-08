@@ -49,14 +49,11 @@ def generator(input_dim=100, units=1024, activation='relu'):
     generator.add(ReLU())
 
     generator.add(
-<<<<<<< HEAD
         Conv2DTranspose(32, kernel_size=5, strides=2, kernel_initializer=init,
                         padding='same')
     )
     generator.add(BatchNormalization(momentum=0.7))
-=======
-        Conv2DTranspose(32, kernel_size=5, strides=2,kernel_initializer=init, padding='same'))
->>>>>>> 6fc6c8e63ece2ae830b22c7686ebd86058adce11
+
     generator.add(ReLU())
 
     generator.add(
