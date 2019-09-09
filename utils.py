@@ -25,9 +25,9 @@ def load_image(image_path, input_height=256, input_width=256):
 
 def scale(img, reverse=False):
     if reverse:
-        return (img * 127.5) + 127.5
+        return (img * 255)
     else:
-        return (img - 127.5) / 127.5
+        return (img / 255.)
 
 
 def combine_images_rgb(generated_images):
@@ -41,7 +41,7 @@ def combine_images_rgb(generated_images):
         i = int(index / cols)
         j = index % cols
         combined_image[
-        width * i:width * (i + 1), height * j:height * (j + 1), :
+            width * i:width * (i + 1), height * j:height * (j + 1), :
         ] = image[:, :, :]
 
     return combined_image
@@ -81,7 +81,7 @@ def load_data(path=None):
                      shape=(len(paths), 256, 256, 3))
     pool = multiprocessing.Pool()
     counter = 0
-    for img in tqdm(pool.imap_unordered(load_image, paths),total=len(paths)):
+    for img in tqdm(pool.imap_unordered(load_image, paths), total=len(paths)):
         if img is not None:
             data[counter, :, :, :] = img
             counter += 1
@@ -155,6 +155,7 @@ def get_gan_paths(save_dir):
     dcgan_path = os.path.join(save_dir, 'dcgan.h5')
     return dcgan_path, discriminator_path, generator_path
 
+
 def sort_raw_files(unsorted_fpath):
     genre_folder = 'genre_links'
     new_path = '/tmp/wikiart_sorted'
@@ -163,7 +164,7 @@ def sort_raw_files(unsorted_fpath):
         genre_name = filename.split('_')[-1].replace('.txt', '')
         genre_path = os.path.join(new_path, genre_name)
         os.mkdir(genre_path)
-        print('Ordering: {} to: {}'.format(genre_name,genre_path))
+        print('Ordering: {} to: {}'.format(genre_name, genre_path))
         with open(os.path.join(genre_folder, filename)) as f:
             files_to_move = f.read().split('\n')
             filenames = [x.split('/')[-1] for x in files_to_move[:-1]]
