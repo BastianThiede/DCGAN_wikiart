@@ -57,7 +57,7 @@ def generator(input_dim=100, units=1024, activation='relu'):
     generator.add(ReLU())
 
     generator.add(
-        Conv2DTranspose(3, kernel_size=5,
+        Conv2DTranspose(3, kernel_size=4,
                         kernel_initializer=init, strides=2, padding='same',
                         activation='tanh')
     )
