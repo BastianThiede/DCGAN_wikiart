@@ -77,7 +77,7 @@ def load_data(path=None):
     print('Searching at: {}'.format(search_path))
     paths = glob(search_path)[:5000]
     fpath = 'memmap_numpy_images.dat'
-    data = np.memmap(fpath, dtype='float16', mode='w+',
+    data = np.memmap(fpath, dtype='float32', mode='w+',
                      shape=(len(paths), 256, 256, 3))
     pool = multiprocessing.Pool()
     counter = 0
