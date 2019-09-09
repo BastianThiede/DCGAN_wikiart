@@ -23,7 +23,7 @@ def generator(input_dim=100, units=1024, activation='relu'):
     generator.add(
         Conv2DTranspose(512, kernel_size=5,
                         kernel_initializer=init, strides=2, padding='same'))
-    generator.add(BatchNormalization(momentum=0.7))
+    generator.add(BatchNormalization())
     generator.add(ReLU())
 
     # Conv 3: 16x16x64
@@ -31,28 +31,28 @@ def generator(input_dim=100, units=1024, activation='relu'):
         Conv2DTranspose(256, kernel_size=5,
                         kernel_initializer=init, strides=2, padding='same')
     )
-    generator.add(BatchNormalization(momentum=0.7))
+    generator.add(BatchNormalization())
     generator.add(ReLU())
 
     generator.add(
         Conv2DTranspose(128, kernel_size=5,
                         kernel_initializer=init, strides=2, padding='same')
     )
-    generator.add(BatchNormalization(momentum=0.7))
+    generator.add(BatchNormalization())
     generator.add(ReLU())
 
     generator.add(
         Conv2DTranspose(64, kernel_size=5, strides=2,
                         kernel_initializer=init, padding='same')
     )
-    generator.add(BatchNormalization(momentum=0.7))
+    generator.add(BatchNormalization())
     generator.add(ReLU())
 
     generator.add(
         Conv2DTranspose(32, kernel_size=5, strides=2, kernel_initializer=init,
                         padding='same')
     )
-    generator.add(BatchNormalization(momentum=0.7))
+    generator.add(BatchNormalization())
 
     generator.add(ReLU())
 
