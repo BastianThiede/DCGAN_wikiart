@@ -149,18 +149,17 @@ def main(config_path, save_dir, data_dir):
             images = generator.predict(z_pred)
             save_images(images, 'dcgan_keras_epoch_{}.png'.format(epoch))
 
-    print(d_loss_fake_data)
-    plt.figure()
-    pd.Series(d_loss_fake_data).rolling(150).max().plot()
-    plt.savefig("d_loss_fake_data.png")
+            plt.figure()
+            pd.Series(d_loss_fake_data).rolling(150).max().plot()
+            plt.savefig("d_loss_fake_data.png")
 
-    plt.figure()
-    pd.Series(d_loss_real_data).rolling(150).max().plot()
-    plt.savefig("d_loss_real_data.png")
+            plt.figure()
+            pd.Series(d_loss_real_data).rolling(150).max().plot()
+            plt.savefig("d_loss_real_data.png")
 
-    plt.figure()
-    pd.Series(g_loss_data).rolling(150).max().plot()
-    plt.savefig("g_loss_data.png")
+            plt.figure()
+            pd.Series(g_loss_data).rolling(150).max().plot()
+            plt.savefig("g_loss_data.png")
 
 
 def load_or_create_model(config_path, dcgan_path, discriminator_path,
