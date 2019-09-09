@@ -141,7 +141,6 @@ def main(config_path, save_dir, data_dir):
             print(np.mean(y_d_gen), 'Mean_preds_fake_labels')
             print(Counter(np.round(y_d_gen)), 'Counter_fake_labels')
             print()
-            display_images(X_d_gen)
 
         if epoch % 10 == 0:
             generator.save(generator_path)
