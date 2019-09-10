@@ -140,7 +140,7 @@ def build_gan(config_path):
     if config['multi_gpu']:
         dcgan = multi_gpu_model(dcgan)
     dcgan.compile(loss='binary_crossentropy',
-                  metrics=['accuracy'],
+                  metrics=['mae'],
                   optimizer=opt)
 
     return dcgan, d, g
