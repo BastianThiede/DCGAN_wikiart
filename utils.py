@@ -176,6 +176,18 @@ def sort_raw_files(unsorted_fpath):
                 print('Skipping: {}'.format(fname))
 
 
+def zero():
+    return np.random.uniform(0.0, 0.01, size=[1])
+
+
+def one():
+    return np.random.uniform(0.99, 1.0, size=[1])
+
+
+def noise(n):
+    return np.random.uniform(-1.0, 1.0, size=[n, 4096])
+
+
 if __name__ == '__main__':
     print(load_config())
     data = load_data()
