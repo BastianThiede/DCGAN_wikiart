@@ -1,5 +1,5 @@
 from utils import (get_image_paths, load_data, display_images,
-                   load_config, save_images, get_gan_paths)
+                   load_config, save_images, get_gan_paths, zero, one, noise)
 from model import build_gan
 import numpy as np
 from time import time
@@ -79,14 +79,14 @@ def main(config_path, save_dir, data_dir):
     print("Total epoch:", config['epochs'], "Number of batches:", num_batches)
     print("-------------------")
 
-    z_pred = np.array([np.random.uniform(0, 1, 100) for _ in range(100)])
+    z_pred = noise(100)
     d_loss_fake_data = list()
     d_loss_real_data = list()
     g_loss_data = list()
     for epoch in range(epochs):
-        y_g = [1 for _ in range(batch_size)]
-        y_d_gen = [0 for _ in range(batch_size)]
-        y_d_true = [1 for _ in range(batch_size)]
+        y_g = [zero() for _ in range(batch_size)]
+        y_d_gen = [one() for _ in range(batch_size)]
+        y_d_true = [zero() for _ in range(batch_size)]
 
         start = time()
         batches = list(range(num_batches))
@@ -180,7 +180,7 @@ def train_batch(X_train, batch_size, dcgan, discriminator, generator, index,
     X_d_true = X_train[index * batch_size:(index + 1) * batch_size]
 
     #X_d_true = X_d_true.view(dtype=np.float32, type=np.ndarray)
-    X_g = np.array([np.random.uniform(0, 1, 100) for _ in range(batch_size)])
+    X_g = noise(batch_size)
     X_d_gen = generator.predict(X_g, verbose=0)
     # train discriminator
     d_loss_real = discriminator.train_on_batch(X_d_true, y_d_true)
