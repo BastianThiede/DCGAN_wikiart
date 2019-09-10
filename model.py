@@ -136,7 +136,7 @@ def build_gan(config_path):
     d.trainable = False
 
     dcgan = Sequential([g, d])
-    opt = Adam(lr=config['learning_rate'], beta_1=config['beta_1'])
+    opt = Adam(lr=config['learning_rate'])
     if config['multi_gpu']:
         dcgan = multi_gpu_model(dcgan)
     dcgan.compile(loss='binary_crossentropy',
