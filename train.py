@@ -84,9 +84,9 @@ def main(config_path, save_dir, data_dir):
     d_loss_real_data = list()
     g_loss_data = list()
     for epoch in range(epochs):
-        y_g = [zero() for _ in range(batch_size)]
-        y_d_gen = [one() for _ in range(batch_size)]
-        y_d_true = [zero() for _ in range(batch_size)]
+        y_g = np.array([zero() for _ in range(batch_size)])
+        y_d_gen = np.array([one() for _ in range(batch_size)])
+        y_d_true = np.array([zero() for _ in range(batch_size)])
 
         start = time()
         batches = list(range(num_batches))
@@ -122,24 +122,24 @@ def main(config_path, save_dir, data_dir):
 
         if epoch % 5 == 0:
             X_d_true = X_train[index * batch_size:(index + 1) * batch_size]
-            X_g = np.array(
-                [np.random.uniform(0, 1, 100) for _ in range(batch_size)])
+            X_g = noise(batch_size)
             X_d_gen = generator.predict(X_g, verbose=0)
 
             disc_preds_true = discriminator.predict(X_d_true)
             disc_preds_fake = discriminator.predict(X_d_gen)
+            print(y_d_true.shape)
             print()
             print(Counter(np.round(disc_preds_true[:, 0])), 'True_pred_count')
             print(np.mean(disc_preds_true), 'Mean_preds_true')
             print(np.std(disc_preds_true), 'Std_preds_true')
             print(np.mean(y_d_true), 'Mean_preds_true_labels')
-            print(Counter(np.round(y_d_true)), 'Counter_true_labels')
+            print(Counter(np.round(y_d_true[:, 0])), 'Counter_true_labels')
             print('-' * 72)
             print(Counter(np.round(disc_preds_fake[:, 0])), 'Fake_pred_count')
             print(np.mean(disc_preds_fake), 'Mean_preds_fake')
             print(np.std(disc_preds_fake), 'Std_preds_fake')
             print(np.mean(y_d_gen), 'Mean_preds_fake_labels')
-            print(Counter(np.round(y_d_gen)), 'Counter_fake_labels')
+            print(Counter(np.round(y_d_gen[:, 0])), 'Counter_fake_labels')
             print()
 
         if epoch % 10 == 0:
