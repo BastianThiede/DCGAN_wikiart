@@ -9,99 +9,114 @@ from keras.utils import multi_gpu_model
 from utils import load_config
 
 
-def generator(input_dim=100, units=1024, activation='relu'):
-    init = RandomNormal(stddev=0.02)
+def generator():
+    G = Sequential()
 
-    # Generator network
-    generator = Sequential()
-    # FC: 2x2x512
-    generator.add(Dense(4 * 4 * 1024, input_shape=(input_dim,),
-                        activation='linear', kernel_initializer=init))
-    generator.add(Reshape((4, 4, 1024)))
+    G.add(Reshape(target_shape=[1, 1, 4096], input_shape=[4096]))
 
-    # Conv 2: 8x8x128
-    generator.add(
-        Conv2DTranspose(512, kernel_size=5,
-                        kernel_initializer=init, strides=2, padding='same'))
-    generator.add(BatchNormalization())
-    generator.add(ReLU())
+    # 1x1x4096
+    G.add(Conv2DTranspose(filters=256, kernel_size=4))
+    G.add(Activation('relu'))
 
-    # Conv 3: 16x16x64
-    generator.add(
-        Conv2DTranspose(256, kernel_size=5,
-                        kernel_initializer=init, strides=2, padding='same')
-    )
-    generator.add(BatchNormalization())
-    generator.add(ReLU())
+    # 4x4x256 - kernel sized increased by 1
+    G.add(Conv2D(filters=256, kernel_size=4, padding='same'))
+    G.add(BatchNormalization(momentum=0.7))
+    G.add(Activation('relu'))
+    G.add(UpSampling2D())
 
-    generator.add(
-        Conv2DTranspose(128, kernel_size=5,
-                        kernel_initializer=init, strides=2, padding='same')
-    )
-    generator.add(BatchNormalization())
-    generator.add(ReLU())
+    # 8x8x256 - kernel sized increased by 1
+    G.add(Conv2D(filters=128, kernel_size=4, padding='same'))
+    G.add(BatchNormalization(momentum=0.7))
+    G.add(Activation('relu'))
+    G.add(UpSampling2D())
 
-    generator.add(
-        Conv2DTranspose(64, kernel_size=4, strides=2,
-                        kernel_initializer=init, padding='same')
-    )
-    generator.add(BatchNormalization())
-    generator.add(ReLU())
+    # 16x16x128
+    G.add(Conv2D(filters=64, kernel_size=3, padding='same'))
+    G.add(BatchNormalization(momentum=0.7))
+    G.add(Activation('relu'))
+    G.add(UpSampling2D())
 
-    generator.add(
-        Conv2DTranspose(32, kernel_size=4, strides=2, kernel_initializer=init,
-                        padding='same')
-    )
-    generator.add(BatchNormalization())
+    # 32x32x64
+    G.add(Conv2D(filters=32, kernel_size=3, padding='same'))
+    G.add(BatchNormalization(momentum=0.7))
+    G.add(Activation('relu'))
+    G.add(UpSampling2D())
 
-    generator.add(ReLU())
+    # 64x64x32
+    G.add(Conv2D(filters=16, kernel_size=3, padding='same'))
+    G.add(BatchNormalization(momentum=0.7))
+    G.add(Activation('relu'))
+    G.add(UpSampling2D())
 
-    generator.add(
-        Conv2DTranspose(3, kernel_size=4,
-                        kernel_initializer=init, strides=2, padding='same',
-                        activation='tanh')
-    )
-    print(generator.summary())
-    return generator
+    # 128x128x16
+    G.add(Conv2D(filters=8, kernel_size=3, padding='same'))
+    G.add(Activation('relu'))
+    G.add(UpSampling2D())
+
+    # 256x256x8
+    G.add(Conv2D(filters=3, kernel_size=3, padding='same'))
+    G.add(Activation('sigmoid'))
+
+    return G
 
 
-def discriminator(input_shape=(32, 32, 3), nb_filter=64):
-    init = RandomNormal(stddev=0.02)
+def discriminator():
+    D = Sequential()
 
-    discriminator = Sequential()
+    # add Gaussian noise to prevent Discriminator overfitting
+    D.add(GaussianNoise(0.2, input_shape=[256, 256, 3]))
 
-    # Conv 1: 16x16x64
+    # 256x256x3 Image
+    D.add(Conv2D(filters=8, kernel_size=3, padding='same'))
+    D.add(LeakyReLU(0.2))
+    D.add(Dropout(0.25))
+    D.add(AveragePooling2D())
 
-    discriminator.add(Conv2D(64, kernel_initializer=init,
-                             kernel_size=5, strides=2, padding='same',
-                             input_shape=(256, 256, 3)))
-    discriminator.add(LeakyReLU(0.2))
+    # 128x128x8
+    D.add(Conv2D(filters=16, kernel_size=3, padding='same'))
+    D.add(BatchNormalization(momentum=0.7))
+    D.add(LeakyReLU(0.2))
+    D.add(Dropout(0.25))
+    D.add(AveragePooling2D())
 
-    # Conv 2:
-    discriminator.add(Conv2D(128, kernel_initializer=init,
-                             kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization())
-    discriminator.add(LeakyReLU(0.2))
+    # 64x64x16
+    D.add(Conv2D(filters=32, kernel_size=3, padding='same'))
+    D.add(BatchNormalization(momentum=0.7))
+    D.add(LeakyReLU(0.2))
+    D.add(Dropout(0.25))
+    D.add(AveragePooling2D())
 
-    discriminator.add(Conv2D(256, kernel_initializer=init,
-                             kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization())
-    discriminator.add(LeakyReLU(0.2))
-    discriminator.add(AveragePooling2D())
+    # 32x32x32
+    D.add(Conv2D(filters=64, kernel_size=3, padding='same'))
+    D.add(BatchNormalization(momentum=0.7))
+    D.add(LeakyReLU(0.2))
+    D.add(Dropout(0.25))
+    D.add(AveragePooling2D())
 
-    discriminator.add(Conv2D(512, kernel_initializer=init,
-                             kernel_size=5, strides=2, padding='same'))
-    discriminator.add(BatchNormalization())
-    discriminator.add(LeakyReLU(0.2))
-    discriminator.add(AveragePooling2D())
+    # 16x16x64
+    D.add(Conv2D(filters=128, kernel_size=3, padding='same'))
+    D.add(BatchNormalization(momentum=0.7))
+    D.add(LeakyReLU(0.2))
+    D.add(Dropout(0.25))
+    D.add(AveragePooling2D())
 
-    # FC
-    discriminator.add(Flatten())
+    # 8x8x128
+    D.add(Conv2D(filters=256, kernel_size=3, padding='same'))
+    D.add(BatchNormalization(momentum=0.7))
+    D.add(LeakyReLU(0.2))
+    D.add(Dropout(0.25))
+    D.add(AveragePooling2D())
 
-    # Output
-    discriminator.add(Dense(1, activation='sigmoid'))
-    print(discriminator.summary())
-    return discriminator
+    # 4x4x256
+    D.add(Flatten())
+
+    # 256
+    D.add(Dense(128))
+    D.add(LeakyReLU(0.2))
+
+    D.add(Dense(1, activation='sigmoid'))
+    print(D.summary())
+    return D
 
 
 def build_gan(config_path):
