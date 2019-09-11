@@ -139,8 +139,8 @@ def load_image_batch(paths, batch_size, batch_idx):
 
 def save_images(images, save_name):
     combined = combine_images_rgb(scale(images, reverse=True))
-    plt.imshow(combined.astype(np.uint8))
     plt.savefig(save_name)
+    return combined
 
 
 def display_images(images):
