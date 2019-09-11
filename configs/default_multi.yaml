@@ -1,5 +1,5 @@
-batch_size : 128
-epochs: 100
+batch_size : 16
+epochs: 400
 learning_rate: 0.0001
 beta_1: 0.5
 multi_gpu: True
