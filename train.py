@@ -85,8 +85,8 @@ def main(config_path, save_dir, data_dir):
     g_loss_data = list()
     for epoch in range(epochs):
         y_g = np.array([zero() for _ in range(batch_size)])
-        y_d_gen = np.array([one() for _ in range(batch_size / 2)])
-        y_d_true = np.array([zero() for _ in range(batch_size / 2)])
+        y_d_gen = np.array([one() for _ in range(int(batch_size / 2))])
+        y_d_true = np.array([zero() for _ in range(int(batch_size / 2))])
 
         start = time()
         batches = list(range(num_batches))
@@ -96,7 +96,8 @@ def main(config_path, save_dir, data_dir):
         accuracy_fake = list()
 
         for index in tqdm(batches):
-            d_loss_fake, d_loss_real, g_loss = train_batch(X_train, batch_size / 2,
+            d_loss_fake, d_loss_real, g_loss = train_batch(X_train,
+                                                           int(batch_size / 2),
                                                            dcgan,
                                                            discriminator,
                                                            generator, index,
@@ -168,13 +169,15 @@ def train_batch(X_train, batch_size, dcgan, discriminator, generator, index,
     X_d_true = X_train[index * batch_size:(index + 1) * batch_size]
 
     #X_d_true = X_d_true.view(dtype=np.float32, type=np.ndarray)
-    X_g = noise(batch_size * 2)
+    X_g = noise(batch_size)
     X_d_gen = generator.predict(X_g, verbose=0)
     # train discriminator
     d_loss_real = discriminator.train_on_batch(X_d_true, y_d_true)
     d_loss_fake = discriminator.train_on_batch(X_d_gen, y_d_gen)
     # train generator
-    g_loss = dcgan.train_on_batch(X_g, y_g)
+    X_g_full = noise(batch_size * 2)
+    print(X_g_full.shape, len(y_g))
+    g_loss = dcgan.train_on_batch(X_g_full, y_g)
     return d_loss_fake, d_loss_real, g_loss
 
 
