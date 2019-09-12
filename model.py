@@ -124,8 +124,7 @@ def build_gan(config_path):
     g = generator()
     d = discriminator()
     opt = Adam(lr=config['learning_rate'],
-               decay=0.0085,
-               beta_1=config['beta_1'])
+               decay=0.0085)
 
     d.trainable = True
     if config['multi_gpu']:
@@ -137,12 +136,12 @@ def build_gan(config_path):
     d.trainable = False
 
     dcgan = Sequential([g, d])
-    opt = Adam(lr=config['learning_rate'])
+    opt = Adam(lr=config['learning_rate'],
+               decay=0.0085)
     if config['multi_gpu']:
         dcgan = multi_gpu_model(dcgan)
     dcgan.compile(loss='binary_crossentropy',
                   metrics=['mae'],
-                  decay=0.0085,
                   optimizer=opt)
 
     return dcgan, d, g
