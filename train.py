@@ -176,7 +176,6 @@ def train_batch(X_train, batch_size, dcgan, discriminator, generator, index,
     d_loss_fake = discriminator.train_on_batch(X_d_gen, y_d_gen)
     # train generator
     X_g_full = noise(batch_size * 2)
-    print(X_g_full.shape, len(y_g))
     g_loss = dcgan.train_on_batch(X_g_full, y_g)
     return d_loss_fake, d_loss_real, g_loss
 
