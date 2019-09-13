@@ -61,7 +61,7 @@ def train_batches(config_path, save_dir, data_dir):
             save_images(images, 'dcgan_keras_epoch_{}.png'.format(epoch))
 
 
-def main(config_path, save_dir, data_dir):
+def main(config_path, save_dir, data_dir,image_dir):
     config = load_config(config_path)
     batch_size = config['batch_size']
     dcgan_path, generator_path, discriminator_path = get_gan_paths(save_dir)
@@ -121,34 +121,14 @@ def main(config_path, save_dir, data_dir):
                   d_loss_real, d_loss_fake, g_loss, epoch, end, mean_acc_real,
                   mean_acc_fake))
 
-        if epoch % 5 == 0:
-            X_d_true = X_train[index * batch_size:(index + 1) * batch_size]
-            X_g = noise(batch_size)
-            X_d_gen = generator.predict(X_g, verbose=0)
-
-            disc_preds_true = discriminator.predict(X_d_true)
-            disc_preds_fake = discriminator.predict(X_d_gen)
-            print(y_d_true.shape)
-            print()
-            print(Counter(np.round(disc_preds_true[:, 0])), 'True_pred_count')
-            print(np.mean(disc_preds_true), 'Mean_preds_true')
-            print(np.std(disc_preds_true), 'Std_preds_true')
-            print(np.mean(y_d_true), 'Mean_preds_true_labels')
-            print(Counter(np.round(y_d_true[:, 0])), 'Counter_true_labels')
-            print('-' * 72)
-            print(Counter(np.round(disc_preds_fake[:, 0])), 'Fake_pred_count')
-            print(np.mean(disc_preds_fake), 'Mean_preds_fake')
-            print(np.std(disc_preds_fake), 'Std_preds_fake')
-            print(np.mean(y_d_gen), 'Mean_preds_fake_labels')
-            print(Counter(np.round(y_d_gen[:, 0])), 'Counter_fake_labels')
-            print()
-
         if epoch % 10 == 0:
             generator.save(generator_path)
             discriminator.save(discriminator_path)
             dcgan.save(dcgan_path)
             images = generator.predict(z_pred)
-            save_images(images, 'dcgan_keras_epoch_{}.png'.format(epoch))
+            fpath = os.path.join(image_dir,
+                                 'dcgan_keras_epoch_{}.png'.format(epoch))
+            save_images(images, fpath)
 
 
 def load_or_create_model(config_path, dcgan_path, discriminator_path,
@@ -186,6 +166,7 @@ def build_argparse():
                         default='test_config.yaml')
     parser.add_argument("--data_dir", help="data-dir", default=None)
     parser.add_argument("--save_dir", help="save dir", default='/tmp')
+    parser.add_argument("--image_dir",default='/tmp')
     return parser
 
 
@@ -194,4 +175,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
     main(config_path=args.config_filename,
          data_dir=args.data_dir,
+         image_dir=args.image_dir,
          save_dir=args.save_dir)
